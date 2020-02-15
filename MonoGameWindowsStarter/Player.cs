@@ -35,7 +35,10 @@ namespace MonoGameWindowsStarter
         {
             this.game = game;
         }
-       
+        public Rectangle RectBounds
+        {
+            get { return bounds; }
+        }
 
         public void LoadContent(ContentManager content)
         {

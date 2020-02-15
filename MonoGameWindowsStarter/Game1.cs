@@ -22,7 +22,10 @@ namespace MonoGameWindowsStarter
         Player player;
         Building building;
         List<Plane> planeList = new List<Plane>();
-        Random random;
+        Random random = new Random();
+        int tileLocationID;
+        private SpriteFont TileIDFont;
+        float randomCheckTimer = 0;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -57,6 +60,7 @@ namespace MonoGameWindowsStarter
             spriteBatch = new SpriteBatch(GraphicsDevice);
             player.LoadContent(Content);
             building.LoadContent(Content);
+            TileIDFont = Content.Load<SpriteFont>("TileLocation");
             // TODO: use this.Content to load your game content here
         }
 
@@ -76,26 +80,12 @@ namespace MonoGameWindowsStarter
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-           
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            
-            if(planeList.Count == 1)
-            {
-                if(planeList[0].bounds.X < 960) //plane is on left side
-                {
-                    planeList.Add(new Plane(this, Content, 1700));
-                }
-                else
-                {
-                    planeList.Add(new Plane(this, Content, 0));
-                }
-            }
-            if (planeList.Count == 0)
-            {
-               
-                planeList.Add(new Plane(this, Content, 0));
-            }
+            tileLocationID = building.FindTile();
+
+            //logic to check if plane should spawn
+            AddPlane(gameTime);
 
 
             foreach(Plane plane in planeList)
@@ -106,16 +96,21 @@ namespace MonoGameWindowsStarter
             player.Update(gameTime);
 
             //Top Scrolling
-            if (player.bounds.Y <= 650 && player.state > State.Idle)
+            if (player.bounds.Y <= 300 && player.state > State.Idle)
             {
                 building.PushTile();
-                player.bounds.Y = 650;
+                
+            }
+            if(player.bounds.Y <= 0)
+            {
+                player.bounds.Y = 0;
             }
             //Bottom Scrolling
             if(player.bounds.Y >= 900 && player.state > State.Idle)
             {
                 building.PullTile();
                 player.bounds.Y = 900;
+                
             }
             //Right Bounds
             if(player.bounds.X >= 1370)
@@ -126,10 +121,54 @@ namespace MonoGameWindowsStarter
             {
                 player.bounds.X = 225;
             }
+
+            foreach(Plane plane in planeList)
+            {
+                for (int i = 0; i < plane.bulletList.Count; i++)
+                {
+                    if(plane.bulletList[i].RectBounds.Intersects(player.RectBounds))
+                    {
+                        plane.bulletList.RemoveAt(i);
+                        i--;
+                        //Player Health Done here
+                    }
+                }
+            }
                 
             
 
             base.Update(gameTime);
+        }
+
+        public void AddPlane(GameTime gameTime)
+        {
+            if (tileLocationID >= 5) //change hardcoded value
+            {
+                randomCheckTimer += gameTime.ElapsedGameTime.Milliseconds;
+                if (randomCheckTimer >= 3000)
+                {
+                    randomCheckTimer = 0;
+                    if (random.Next(1, 50) == 1)
+                    {
+                        if (planeList.Count == 1)
+                        {
+                            if (planeList[0].bounds.X < 960) //plane is on left side
+                            {
+                                planeList.Add(new Plane(this, Content, 1700, random));
+                            }
+                            else
+                            {
+                                planeList.Add(new Plane(this, Content, 0, random));
+                            }
+                        }
+                    }
+                    if (planeList.Count == 0)
+                    {
+
+                        planeList.Add(new Plane(this, Content, 0, random));
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -142,12 +181,14 @@ namespace MonoGameWindowsStarter
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
+            spriteBatch.DrawString(TileIDFont, "Tile ID: " + tileLocationID, new Vector2(0, 0), Color.White);
             building.Draw(spriteBatch);
             player.Draw(spriteBatch);
             foreach(Plane plane in planeList)
             {
                 plane.Draw(spriteBatch);
             }
+            
             spriteBatch.End();
             base.Draw(gameTime);
         }

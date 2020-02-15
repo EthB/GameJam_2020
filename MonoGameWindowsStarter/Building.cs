@@ -15,7 +15,7 @@ namespace MonoGameWindowsStarter
         Game1 game;
         ContentManager content;
         Texture2D texture;
-        List<Tile> tileSet = new List<Tile>();
+        public List<Tile> tileSet = new List<Tile>();
 
         public Building(Game1 game, int tileSize)
         {
@@ -27,7 +27,17 @@ namespace MonoGameWindowsStarter
             }
             
         }
-
+        public int FindTile()
+        {
+            for (int i = 0; i < tileSet.Count; i++)
+            {
+                if(tileSet[i].bounds.Y > 0 && tileSet[i].bounds.Y < 1080)
+                {
+                    return i;
+                }
+            }
+            return 0;
+        }
         public void LoadContent(ContentManager content)
         {
             this.content = content;

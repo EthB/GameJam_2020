@@ -61,6 +61,13 @@
 /processorParam:TextureFormat=Color
 /build:planeBlue.png
 
+#begin TileLocation.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:TileLocation.spritefont
+
 #begin wall.png
 /importer:TextureImporter
 /processor:TextureProcessor

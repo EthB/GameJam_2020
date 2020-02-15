@@ -29,7 +29,7 @@ namespace MonoGameWindowsStarter
             this.content = content;
             texture = content.Load<Texture2D>("Wall");
 
-            bounds.Width = 1920 - 450;
+            bounds.Width = 1470;
             bounds.Height = 1080;
             bounds.X = 225;
         }
