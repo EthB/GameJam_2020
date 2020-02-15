@@ -1,6 +1,14 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Audio;
+
 
 namespace MonoGameWindowsStarter
 {
@@ -13,6 +21,8 @@ namespace MonoGameWindowsStarter
         SpriteBatch spriteBatch;
         Player player;
         Building building;
+        List<Plane> planeList = new List<Plane>();
+        Random random;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -32,7 +42,7 @@ namespace MonoGameWindowsStarter
             // TODO: Add your initialization logic here
             graphics.PreferredBackBufferWidth = 1920;
             graphics.PreferredBackBufferHeight = 1080;
-            graphics.IsFullScreen = true;
+            //graphics.IsFullScreen = true;
             graphics.ApplyChanges();
             base.Initialize();
         }
@@ -66,22 +76,58 @@ namespace MonoGameWindowsStarter
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+           
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+            
+            if(planeList.Count == 1)
+            {
+                if(planeList[0].bounds.X < 960) //plane is on left side
+                {
+                    planeList.Add(new Plane(this, Content, 1700));
+                }
+                else
+                {
+                    planeList.Add(new Plane(this, Content, 0));
+                }
+            }
+            if (planeList.Count == 0)
+            {
+               
+                planeList.Add(new Plane(this, Content, 0));
+            }
 
-            // TODO: Add your update logic here
+
+            foreach(Plane plane in planeList)
+            {
+                plane.Update(gameTime);
+            }
+
             player.Update(gameTime);
 
-            if(player.bounds.Y <= 650 )
+            //Top Scrolling
+            if (player.bounds.Y <= 650 && player.state > State.Idle)
             {
                 building.PushTile();
                 player.bounds.Y = 650;
             }
-            if(player.bounds.Y >= 1000)
+            //Bottom Scrolling
+            if(player.bounds.Y >= 900 && player.state > State.Idle)
             {
                 building.PullTile();
-                player.bounds.Y = 1000;
+                player.bounds.Y = 900;
             }
+            //Right Bounds
+            if(player.bounds.X >= 1370)
+            {
+                player.bounds.X = 1370;
+            }
+            if (player.bounds.X <= 225)
+            {
+                player.bounds.X = 225;
+            }
+                
+            
 
             base.Update(gameTime);
         }
@@ -97,7 +143,11 @@ namespace MonoGameWindowsStarter
             // TODO: Add your drawing code here
             spriteBatch.Begin();
             building.Draw(spriteBatch);
-            player.Draw(spriteBatch);           
+            player.Draw(spriteBatch);
+            foreach(Plane plane in planeList)
+            {
+                plane.Draw(spriteBatch);
+            }
             spriteBatch.End();
             base.Draw(gameTime);
         }
