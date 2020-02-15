@@ -37,6 +37,10 @@ namespace MonoGameWindowsStarter
             this.random = random;
             LoadContent(location);
         }
+        public Rectangle RectBounds
+        {
+            get { return bounds; }
+        }
         public void LoadContent(int location)
         {
             texture = content.Load<Texture2D>("planeBlue");

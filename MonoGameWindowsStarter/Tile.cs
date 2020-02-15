@@ -24,10 +24,10 @@ namespace MonoGameWindowsStarter
             
         }
 
-        public void LoadContent(ContentManager content)
+        public void LoadContent(ContentManager content, string textureName)
         {
             this.content = content;
-            texture = content.Load<Texture2D>("Wall");
+            texture = content.Load<Texture2D>("upscaled building textures\\" + textureName);
 
             bounds.Width = 1470;
             bounds.Height = 1080;

@@ -22,16 +22,18 @@ namespace MonoGameWindowsStarter
         Player player;
         Building building;
         List<Plane> planeList = new List<Plane>();
+        List<Powerup> powerupList = new List<Powerup>();
         Random random = new Random();
         int tileLocationID;
         private SpriteFont TileIDFont;
-        float randomCheckTimer = 0;
+        double randomCheckTimer = 0;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             player = new Player(this);
-            building = new Building(this, 30);
+            
         }
 
         /// <summary>
@@ -57,10 +59,12 @@ namespace MonoGameWindowsStarter
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
+            building = new Building(this, 10, Content, graphics.GraphicsDevice);
             spriteBatch = new SpriteBatch(GraphicsDevice);
             player.LoadContent(Content);
-            building.LoadContent(Content);
+            building.LoadContent();
             TileIDFont = Content.Load<SpriteFont>("TileLocation");
+            powerupList.Add(new BeanPowerup(this, Content, 550, 100));
             // TODO: use this.Content to load your game content here
         }
 
@@ -84,10 +88,14 @@ namespace MonoGameWindowsStarter
                 Exit();
             tileLocationID = building.FindTile();
 
+            
             //logic to check if plane should spawn
             AddPlane(gameTime);
 
-
+            foreach(Powerup powerup in powerupList)
+            {
+                powerup.Update(gameTime);
+            }
             foreach(Plane plane in planeList)
             {
                 plane.Update(gameTime);
@@ -99,7 +107,10 @@ namespace MonoGameWindowsStarter
             if (player.bounds.Y <= 300 && player.state > State.Idle)
             {
                 building.PushTile();
-                
+                foreach(Powerup powerup in powerupList)
+                {
+                    powerup.PushPowerup();
+                }
             }
             if(player.bounds.Y <= 0)
             {
@@ -110,7 +121,11 @@ namespace MonoGameWindowsStarter
             {
                 building.PullTile();
                 player.bounds.Y = 900;
-                
+                foreach (Powerup powerup in powerupList)
+                {
+                    powerup.PullPowerup();
+                }
+
             }
             //Right Bounds
             if(player.bounds.X >= 1370)
@@ -122,16 +137,21 @@ namespace MonoGameWindowsStarter
                 player.bounds.X = 225;
             }
 
-            foreach(Plane plane in planeList)
+            for(int i = 0; i < planeList.Count; i++)
             {
-                for (int i = 0; i < plane.bulletList.Count; i++)
+                for (int j = 0; j < planeList[i].bulletList.Count; j++)
                 {
-                    if(plane.bulletList[i].RectBounds.Intersects(player.RectBounds))
+                    if(planeList[i].bulletList[j].RectBounds.Intersects(player.RectBounds))
                     {
-                        plane.bulletList.RemoveAt(i);
-                        i--;
+                        planeList[i].bulletList.RemoveAt(j);
+                        j--;
                         //Player Health Done here
                     }
+                }
+                if(player.RectBounds.Intersects(planeList[i].RectBounds) && Keyboard.GetState().IsKeyDown(Keys.Space))
+                {
+                    planeList.RemoveAt(i);
+                    i--;
                 }
             }
                 
@@ -144,11 +164,11 @@ namespace MonoGameWindowsStarter
         {
             if (tileLocationID >= 5) //change hardcoded value
             {
-                randomCheckTimer += gameTime.ElapsedGameTime.Milliseconds;
-                if (randomCheckTimer >= 3000)
+                randomCheckTimer += gameTime.ElapsedGameTime.TotalSeconds;
+                if (randomCheckTimer >= 10)
                 {
                     randomCheckTimer = 0;
-                    if (random.Next(1, 50) == 1)
+                    if (random.Next(1, 75) == 1)
                     {
                         if (planeList.Count == 1)
                         {
@@ -184,6 +204,10 @@ namespace MonoGameWindowsStarter
             spriteBatch.DrawString(TileIDFont, "Tile ID: " + tileLocationID, new Vector2(0, 0), Color.White);
             building.Draw(spriteBatch);
             player.Draw(spriteBatch);
+            foreach(Powerup powerup in powerupList)
+            {
+                powerup.Draw(spriteBatch);
+            }
             foreach(Plane plane in planeList)
             {
                 plane.Draw(spriteBatch);

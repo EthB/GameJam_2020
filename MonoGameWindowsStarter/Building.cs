@@ -14,18 +14,28 @@ namespace MonoGameWindowsStarter
     {
         Game1 game;
         ContentManager content;
+        GraphicsDevice graphicsDevice;
         Texture2D texture;
         public List<Tile> tileSet = new List<Tile>();
+        List<string> tileNames = new List<string> { "sprite_0", "sprite_1", "sprite_2", "sprite_3", "sprite_4", "sprite_5", "sprite_6" };
+        Random random = new Random();
+        int tileSize;
 
-        public Building(Game1 game, int tileSize)
+        public Building(Game1 game, int tileSize, ContentManager content, GraphicsDevice graphicsDevice)
         {
             this.game = game;
-            tileSet.Add(new Tile(game, 0)); //inital tile
+            this.content = content;
+            this.graphicsDevice = graphicsDevice;
+            this.tileSize = tileSize;
+            tileSet.Add(new Tile(game, 0));
             for (int i = 1; i < tileSize; i++)
             {
+
                 tileSet.Add(new Tile(game, tileSet[i - 1].bounds.Y - 1080));
+
             }
-            
+            LoadContent();
+
         }
         public int FindTile()
         {
@@ -38,13 +48,14 @@ namespace MonoGameWindowsStarter
             }
             return 0;
         }
-        public void LoadContent(ContentManager content)
+        public void LoadContent()
         {
-            this.content = content;
-            foreach(Tile tile in tileSet)
+            tileSet[0].LoadContent(content, "sprite_8");
+            for (int i = 1; i < tileSet.Count - 1; i++)
             {
-                tile.LoadContent(content);
+                tileSet[i].LoadContent(content, tileNames[random.Next(1, 7)]);
             }
+            tileSet[tileSize - 1].LoadContent(content, "sprite_7");
         }
         public void Update()
         {
