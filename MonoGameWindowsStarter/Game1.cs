@@ -11,11 +11,14 @@ namespace MonoGameWindowsStarter
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-
+        Player player;
+        Building building;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            player = new Player(this);
+            building = new Building(this, 30);
         }
 
         /// <summary>
@@ -27,7 +30,10 @@ namespace MonoGameWindowsStarter
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            graphics.PreferredBackBufferWidth = 1920;
+            graphics.PreferredBackBufferHeight = 1080;
+            graphics.IsFullScreen = true;
+            graphics.ApplyChanges();
             base.Initialize();
         }
 
@@ -39,7 +45,8 @@ namespace MonoGameWindowsStarter
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
+            player.LoadContent(Content);
+            building.LoadContent(Content);
             // TODO: use this.Content to load your game content here
         }
 
@@ -63,6 +70,18 @@ namespace MonoGameWindowsStarter
                 Exit();
 
             // TODO: Add your update logic here
+            player.Update(gameTime);
+
+            if(player.bounds.Y <= 650 )
+            {
+                building.PushTile();
+                player.bounds.Y = 650;
+            }
+            if(player.bounds.Y >= 1000)
+            {
+                building.PullTile();
+                player.bounds.Y = 1000;
+            }
 
             base.Update(gameTime);
         }
@@ -76,7 +95,10 @@ namespace MonoGameWindowsStarter
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
-
+            spriteBatch.Begin();
+            building.Draw(spriteBatch);
+            player.Draw(spriteBatch);           
+            spriteBatch.End();
             base.Draw(gameTime);
         }
     }
