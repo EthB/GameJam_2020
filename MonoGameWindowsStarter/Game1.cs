@@ -41,6 +41,8 @@ namespace MonoGameWindowsStarter
         public bool deadBaby;
         public bool isStarted;
         Texture2D titleTexture;
+        List<Cracks> cracksList;
+        TimeSpan crackTimer;
 
 
         public Game1()
@@ -105,6 +107,9 @@ namespace MonoGameWindowsStarter
             {
                 milkbullet.LoadContent(Content);
             }
+            cracksList = new List<Cracks>();
+            crackTimer = new TimeSpan(0);
+
             // TODO: use this.Content to load your game content here
         }
 
@@ -164,7 +169,7 @@ namespace MonoGameWindowsStarter
             player.Update(gameTime);
 
             //Top Scrolling
-            if (player.bounds.Y <= 300 && player.state > State.Idle)
+            if (player.bounds.Y <= 300 && player.state > State.Idle && !player.pounding)
             {
                 building.PushTile(speed);
                 foreach(Powerup powerup in powerupList)
@@ -183,13 +188,17 @@ namespace MonoGameWindowsStarter
                 {
                     cloud.PushCloud();
                 }
+                foreach(Cracks crack in cracksList)
+                {
+                    crack.Push(speed);
+                }
             }
             if(player.bounds.Y <= 300)
             {
                 player.bounds.Y = 300;
             }
             //Bottom Scrolling
-            if(player.bounds.Y >= 900 && player.state > State.Idle)
+            if(player.bounds.Y >= 900 && player.state > State.Idle && !player.pounding)
             {
                 building.PullTile(speed);
                 player.bounds.Y = 900;
@@ -208,6 +217,10 @@ namespace MonoGameWindowsStarter
                 foreach(Cloud cloud in cloudList)
                 {
                     cloud.PullCloud();
+                }
+                foreach(Cracks crack in cracksList)
+                {
+                    crack.Pull(speed);
                 }
 
             }
@@ -262,13 +275,20 @@ namespace MonoGameWindowsStarter
             }
     
             if(Keyboard.GetState().IsKeyDown(Keys.Space)) {
-                if (hasBottle)
+                if (crackTimer.TotalSeconds > 1 && !hasBottle)
+                {
+                    player.pounding = true;
+                    cracksList.Add(new Cracks(player, Content));
+                    crackTimer = new TimeSpan(0);
+                }
+                else if (hasBottle)
                 {
                     milkBullets.Add(new MilkBullet(player.RectBounds, 1, Content));
                     milkBullets.Add(new MilkBullet(player.RectBounds, 2, Content));
                     milkBullets.Add(new MilkBullet(player.RectBounds, 3, Content));
                 }
             }
+            crackTimer += gameTime.ElapsedGameTime;
             foreach (MilkBullet milkbullet in milkBullets)
             {
                 milkbullet.Update(gameTime);
@@ -411,8 +431,12 @@ namespace MonoGameWindowsStarter
             {
                 powerup.Draw(spriteBatch);
             }
-            
+            foreach( Cracks crack in cracksList)
+            {
+                crack.Draw(spriteBatch);
+            }
             player.Draw(spriteBatch);
+            
             foreach (Plane plane in planeList)
             {
                 plane.Draw(spriteBatch);

@@ -25,6 +25,7 @@ namespace MonoGameWindowsStarter
         Texture2D texture;
         Texture2D flyingBaby;
         Texture2D cryingBaby;
+        Texture2D poundingTexture;
         public BoundingRectangle bounds;
         Rectangle deadBounds;
         const int ANIMATION_FRAME_RATE = 124;
@@ -32,12 +33,17 @@ namespace MonoGameWindowsStarter
         const int DEAD_HEIGHT = 30;
         const int FRAME_WIDTH = 256;
         const int FRAME_HEIGHT = 256;
+        const int POUND_WIDTH = 50;
+        const int POUND_HEIGHT = 62;
         public State state = State.Idle;
         TimeSpan timer;
         int frame;
         public float speed;
         public bool FlyingBaby;
         bool lastState;
+        public bool pounding;
+        const int POUND_FRAMERATE = 180;
+        int frameCount = 0;
 
         public Player(Game1 game)
         {
@@ -55,6 +61,7 @@ namespace MonoGameWindowsStarter
             texture = content.Load<Texture2D>("Baby_Crawl");
             flyingBaby = content.Load<Texture2D>("Baby Projectile");
             cryingBaby = content.Load<Texture2D>("Crying Baby");
+            poundingTexture = content.Load<Texture2D>("Baby Rampage");
 
             bounds.Width = 400;
             bounds.Height = 400;
@@ -64,6 +71,7 @@ namespace MonoGameWindowsStarter
 
             deadBounds = new Rectangle(0, 0, 400, 400);
             lastState = false;
+            pounding = false;
         }
 
         public void Update(GameTime gameTime)
@@ -98,41 +106,48 @@ namespace MonoGameWindowsStarter
             }
             else
             {
-                if (!FlyingBaby)
+                if (pounding)
                 {
 
-                    var keyboardState = Keyboard.GetState();
-                    if (keyboardState.IsKeyDown(Keys.Up))
-                    {
-                        bounds.Y -= ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
-                        if (state == State.Idle) state = State.Moving;
-                    }
-                    if (keyboardState.IsKeyDown(Keys.Down))
-                    {
-                        bounds.Y += ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
-                        if (state == State.Idle) state = State.Moving;
-                    }
-                    if (keyboardState.IsKeyDown(Keys.Right))
-                    {
-                        bounds.X += ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
-                        if (state == State.Idle) state = State.Moving;
-                    }
-                    if (keyboardState.IsKeyDown(Keys.Left))
-                    {
-                        bounds.X -= ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
-                        if (state == State.Idle) state = State.Moving;
-                    }
-                    if (keyboardState.IsKeyUp(Keys.Up) && keyboardState.IsKeyUp(Keys.Down) && keyboardState.IsKeyUp(Keys.Left) && keyboardState.IsKeyUp(Keys.Right))
-                    {
-                        state = State.Idle;
-                    }
                 }
                 else
                 {
-                    bounds.Y -= ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
+                    if (!FlyingBaby)
+                    {
+
+                        var keyboardState = Keyboard.GetState();
+                        if (keyboardState.IsKeyDown(Keys.Up))
+                        {
+                            bounds.Y -= ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
+                            if (state == State.Idle) state = State.Moving;
+                        }
+                        if (keyboardState.IsKeyDown(Keys.Down))
+                        {
+                            bounds.Y += ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
+                            if (state == State.Idle) state = State.Moving;
+                        }
+                        if (keyboardState.IsKeyDown(Keys.Right))
+                        {
+                            bounds.X += ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
+                            if (state == State.Idle) state = State.Moving;
+                        }
+                        if (keyboardState.IsKeyDown(Keys.Left))
+                        {
+                            bounds.X -= ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
+                            if (state == State.Idle) state = State.Moving;
+                        }
+                        if (keyboardState.IsKeyUp(Keys.Up) && keyboardState.IsKeyUp(Keys.Down) && keyboardState.IsKeyUp(Keys.Left) && keyboardState.IsKeyUp(Keys.Right))
+                        {
+                            state = State.Idle;
+                        }
+                    }
+                    else
+                    {
+                        bounds.Y -= ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
+                    }
                 }
             }
-            if (FlyingBaby || game.deadBaby)
+            if (FlyingBaby || game.deadBaby || pounding)
             { 
                 timer += gameTime.ElapsedGameTime;
             }
@@ -141,22 +156,57 @@ namespace MonoGameWindowsStarter
                 if (state != State.Idle) timer += gameTime.ElapsedGameTime;
             }
 
-
-
-            while (timer.TotalMilliseconds > ANIMATION_FRAME_RATE)
+            if(pounding && FlyingBaby)
             {
-                if (state < State.MovingEnd)
-                {
-                    state++;
-                }
-                else if (state == State.MovingEnd)
-                {
-                    state = State.Idle;
-                }
-                frame++;
-                timer -= new TimeSpan(0, 0, 0, 0, ANIMATION_FRAME_RATE);
+                frameCount = 0;
+                frame = 0;
+                pounding = false;
             }
-            if (game.deadBaby)
+            if (pounding && !FlyingBaby)
+            {
+                while (timer.TotalMilliseconds > POUND_FRAMERATE)
+                {
+                    if (frameCount == 0)
+                    {
+                        //bounds.X += 12;
+                        //bounds.Y += 12;
+                        //bounds.Width -= 100;
+                        //bounds.Height -= 12;
+                    }
+                    if (frameCount<5)
+                    {
+                        frame++;
+                        frameCount++;
+                    }
+                    else 
+                    {
+                        pounding = false;
+                        frameCount = 0;
+                        //bounds.Height += 12;
+                        //bounds.Width += 100;
+                        //bounds.X -= 12;
+                        //bounds.Y -= 12;
+                    }
+                    timer -= new TimeSpan(0, 0, 0, 0, POUND_FRAMERATE);
+                }
+            }
+            else
+            {
+                while (timer.TotalMilliseconds > ANIMATION_FRAME_RATE)
+                {
+                    if (state < State.MovingEnd)
+                    {
+                        state++;
+                    }
+                    else if (state == State.MovingEnd)
+                    {
+                        state = State.Idle;
+                    }
+                    frame++;
+                    timer -= new TimeSpan(0, 0, 0, 0, ANIMATION_FRAME_RATE);
+                }
+            }
+            if (game.deadBaby || pounding)
             {
                 frame %= 5;
             }
@@ -191,14 +241,25 @@ namespace MonoGameWindowsStarter
             }
             else
             {
-                if (!FlyingBaby)
+                if (FlyingBaby)
                 {
                     var source = new Rectangle(
                     frame * FRAME_WIDTH,
                     (int)state % 4 * FRAME_HEIGHT,
                     FRAME_WIDTH,
                     FRAME_HEIGHT);
-                    spriteBatch.Draw(texture, bounds, source, Color.White);
+                    spriteBatch.Draw(flyingBaby, bounds, source, Color.White);
+                }
+                else if (pounding)
+                {
+                    var source = new Rectangle(
+                    0,
+                    frame * POUND_HEIGHT,
+                    POUND_WIDTH,
+                    POUND_HEIGHT);
+                    spriteBatch.Draw(poundingTexture, new Rectangle((int)bounds.X +45, (int)bounds.Y +12,
+                        (int)bounds.Width-90, (int)bounds.Height -12)
+                        , source, Color.White);
                 }
                 else
                 {
@@ -207,7 +268,7 @@ namespace MonoGameWindowsStarter
                     (int)state % 4 * FRAME_HEIGHT,
                     FRAME_WIDTH,
                     FRAME_HEIGHT);
-                    spriteBatch.Draw(flyingBaby, bounds, source, Color.White);
+                    spriteBatch.Draw(texture, bounds, source, Color.White);
                 }
             }
             
