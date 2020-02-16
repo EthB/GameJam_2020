@@ -21,31 +21,29 @@ namespace MonoGameWindowsStarter
         SpriteBatch spriteBatch;
         public Player player;
         Building building;
-        List<Plane> planeList = new List<Plane>();
-        public List<Powerup> powerupList = new List<Powerup>();
+        List<Plane> planeList;
+        List<Powerup> powerupList;
         Random random = new Random();
         int tileLocationID;
         private SpriteFont TileIDFont;
-        double randomCheckTimer = 0;
-        public float speed = 5;
-        public bool hasBottle = false;
-        List<MilkBullet> milkBullets = new List<MilkBullet>();
+        private SpriteFont DeadFont;
+        double randomCheckTimer;
+        public float speed;
+        public bool hasBottle;
+        List<MilkBullet> milkBullets;
         Healthbar health1;
         Healthbar health2;
         Healthbar health3;
-        public int hits = 3;
+        public int hits;
         Texture2D Sky;
-        double hitsTimer = 0;
+        double hitsTimer;
 
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            player = new Player(this);
-            health1 = new Healthbar(this, 0, 950);
-            health2 = new Healthbar(this, 100, 950);
-            health3 = new Healthbar(this, 200, 950);
+            
 
         }
             
@@ -71,12 +69,26 @@ namespace MonoGameWindowsStarter
         /// </summary>
         protected override void LoadContent()
         {
+            player = new Player(this);
+            health1 = new Healthbar(this, 0, 950);
+            health2 = new Healthbar(this, 100, 950);
+            health3 = new Healthbar(this, 200, 950);
+            planeList = new List<Plane>();
+            powerupList = new List<Powerup>();
+            randomCheckTimer = 0;
+            float speed = 5;
+            bool hasBottle = false;
+            milkBullets = new List<MilkBullet>();
+            hits = 3;
+            deadBaby = false;
+            double hitsTimer = 0;
             // Create a new SpriteBatch, which can be used to draw textures.
-            building = new Building(this, 30, Content, graphics.GraphicsDevice);
+            building = new Building(this, 10, Content, graphics.GraphicsDevice);
             spriteBatch = new SpriteBatch(GraphicsDevice);
             player.LoadContent(Content);
             building.LoadContent();
             TileIDFont = Content.Load<SpriteFont>("TileLocation");
+            DeadFont = Content.Load<SpriteFont>("DeadFont");
             Sky = Content.Load<Texture2D>("Sky");
             health1.LoadContent(Content);
             health2.LoadContent(Content);
@@ -107,6 +119,11 @@ namespace MonoGameWindowsStarter
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             tileLocationID = building.FindTile();
+
+            if (deadBaby && Keyboard.GetState().IsKeyDown(Keys.Enter))
+            {
+                Restart();
+            }
             hitsTimer += gameTime.ElapsedGameTime.TotalSeconds;
             if(speed == 0)
             {
@@ -244,6 +261,12 @@ namespace MonoGameWindowsStarter
                 }
             }
 
+            //Dead Baby
+            if(hits <= 0)
+            {
+                deadBaby = true;
+            }
+
 
 
             base.Update(gameTime);
@@ -314,8 +337,18 @@ namespace MonoGameWindowsStarter
             {
                 milkbullet.Draw(spriteBatch);
             }
+            if (deadBaby)
+            {
+                spriteBatch.DrawString(DeadFont, "You Dead, Press Enter to retry", new Vector2(600, 600), Color.White);
+            }
             spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        private void Restart()
+        {
+            LoadContent();
+
         }
     }
 }
