@@ -81,6 +81,8 @@ namespace MonoGameWindowsStarter
                     {
                         deadBounds.Width -= 12;
                         deadBounds.Height -= 12;
+                        deadBounds.X += 24;
+                        deadBounds.Y += 36;
                     }
                     
                 }

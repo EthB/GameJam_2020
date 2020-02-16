@@ -112,6 +112,7 @@ namespace MonoGameWindowsStarter
             else
             {
                 //CHOKE AND DIE
+                game.hits = 0;
             }
         }
 

@@ -22,12 +22,13 @@ namespace MonoGameWindowsStarter
         public Player player;
         Building building;
         List<Plane> planeList;
+        List<Cloud> cloudList;
         public List<Powerup> powerupList;
         Random random = new Random();
         int tileLocationID;
         private SpriteFont TileIDFont;
         private SpriteFont DeadFont;
-        double randomCheckTimer;
+        double randomCheckTimer, randomCloudTimer;
         public float speed;
         public bool hasBottle;
         List<MilkBullet> milkBullets;
@@ -38,6 +39,8 @@ namespace MonoGameWindowsStarter
         Texture2D Sky;
         double hitsTimer;
         public bool deadBaby;
+        public bool isStarted;
+        Texture2D titleTexture;
         Song backgroundSong;
         SoundEffect planeExplode;
         SoundEffect babyHit;
@@ -79,21 +82,25 @@ namespace MonoGameWindowsStarter
             health3 = new Healthbar(this, 200, 950);
             planeList = new List<Plane>();
             powerupList = new List<Powerup>();
+            cloudList = new List<Cloud>();
             randomCheckTimer = 0;
+            randomCloudTimer = 0;
             float speed = 5;
             bool hasBottle = false;
             milkBullets = new List<MilkBullet>();
             hits = 3;
             deadBaby = false;
+            isStarted = false;
             double hitsTimer = 0;
             // Create a new SpriteBatch, which can be used to draw textures.
-            building = new Building(this, 10, Content, graphics.GraphicsDevice);
+            building = new Building(this, 700, Content, graphics.GraphicsDevice);
             spriteBatch = new SpriteBatch(GraphicsDevice);
             player.LoadContent(Content);
             building.LoadContent();
             TileIDFont = Content.Load<SpriteFont>("TileLocation");
             DeadFont = Content.Load<SpriteFont>("DeadFont");
             Sky = Content.Load<Texture2D>("Sky");
+            titleTexture = Content.Load<Texture2D>("Title");
             health1.LoadContent(Content);
             health2.LoadContent(Content);
             health3.LoadContent(Content);
@@ -129,17 +136,25 @@ namespace MonoGameWindowsStarter
                 Exit();
             tileLocationID = building.FindTile();
 
-            if (deadBaby && Keyboard.GetState().IsKeyDown(Keys.Enter))
+            if (Keyboard.GetState().IsKeyDown(Keys.Enter))
             {
-                Restart();
+                if (deadBaby)
+                {
+                    Restart();
+                }
+                if (!isStarted)
+                {
+                    isStarted = true;
+                }
             }
             hitsTimer += gameTime.ElapsedGameTime.TotalSeconds;
-            if(speed == 0)
+            if(speed <= 0)
             {
                 speed = 5;
             }
             //logic to check if plane should spawn
             AddPlane(gameTime);
+            AddCloud(gameTime);
             building.Update(gameTime);
             foreach(Powerup powerup in powerupList)
             {
@@ -148,6 +163,10 @@ namespace MonoGameWindowsStarter
             foreach(Plane plane in planeList)
             {
                 plane.Update(gameTime);
+            }
+            foreach(Cloud cloud in cloudList)
+            {
+                cloud.Update(gameTime);
             }
 
             player.Update(gameTime);
@@ -168,10 +187,14 @@ namespace MonoGameWindowsStarter
                 {
                     trash.PushTrash();
                 }
+                foreach(Cloud cloud in cloudList)
+                {
+                    cloud.PushCloud();
+                }
             }
-            if(player.bounds.Y <= 0)
+            if(player.bounds.Y <= 300)
             {
-                player.bounds.Y = 3;
+                player.bounds.Y = 300;
             }
             //Bottom Scrolling
             if(player.bounds.Y >= 900 && player.state > State.Idle)
@@ -189,6 +212,10 @@ namespace MonoGameWindowsStarter
                 foreach(Trash trash in building.trashList)
                 {
                     trash.PullTrash();
+                }
+                foreach(Cloud cloud in cloudList)
+                {
+                    cloud.PullCloud();
                 }
 
             }
@@ -211,8 +238,11 @@ namespace MonoGameWindowsStarter
                         planeList[i].bulletList.RemoveAt(j);
                         j--;
                         //Player Health Done here
-                        hits--;
-                        babyHit.Play();
+                        if (!hasBottle)
+                        {
+                            hits--;
+                            babyHit.Play();
+                        }
                     }
                 }
                 if(player.RectBounds.Intersects(planeList[i].RectBounds) && Keyboard.GetState().IsKeyDown(Keys.Space))
@@ -251,7 +281,22 @@ namespace MonoGameWindowsStarter
             foreach (MilkBullet milkbullet in milkBullets)
             {
                 milkbullet.Update(gameTime);
-
+                for(int i=0; i<building.trashList.Count; i++)
+                {
+                    if (building.trashList[i].RectBounds.Intersects(milkbullet.bounds))
+                    {
+                        building.trashList.RemoveAt(i);
+                        i--;
+                    }
+                }
+                for(int i=0; i<planeList.Count; i++)
+                {
+                    if (planeList[i].RectBounds.Intersects(milkbullet.bounds))
+                    {
+                        planeList.RemoveAt(i);
+                        i--;
+                    }
+                }
             }
             for (int i = 1; i < milkBullets.Count(); i++)
             {
@@ -261,14 +306,25 @@ namespace MonoGameWindowsStarter
                     i--;
                 }
             }
+            for (int i = 0; i < cloudList.Count; i++)
+            {
+                if(cloudList[i].isVisible == false)
+                {
+                    cloudList.RemoveAt(i);
+                    i--;
+                }
+            }
 
             foreach(Trash trash in building.trashList)
             {
                 if(trash.RectBounds.Intersects(player.RectBounds) && hitsTimer >= 3)
                 {
-                    hits--;
-                    hitsTimer = 0;
-                    babyHit.Play();
+                    if (!hasBottle)
+                    {
+                        hits--;
+                        hitsTimer = 0;
+                        babyHit.Play();
+                    }
                 }
             }
 
@@ -278,7 +334,14 @@ namespace MonoGameWindowsStarter
                 deadBaby = true;
             }
 
-
+            if(building.tileSet[building.tileSet.Count - 1].bounds.Y >= -200)
+            {
+                if(player.bounds.Y <= 200)
+                {
+                    speed = 0.001f;
+                    player.bounds.Y = 200;
+                }
+            }
 
             base.Update(gameTime);
         }
@@ -312,9 +375,30 @@ namespace MonoGameWindowsStarter
                     }
                 }
             }
-
-            
         }
+            public void AddCloud(GameTime gameTime)
+            {
+                if(tileLocationID >= 2)
+                {
+                randomCloudTimer += gameTime.ElapsedGameTime.TotalSeconds;
+                if(randomCloudTimer >= 2)
+                {
+                    randomCloudTimer = 0;
+                    int randCloudNum = random.Next(1, 5);
+                    if(randCloudNum == 1)
+                    {
+                        cloudList.Add(new Cloud(this, Content, 0, random));
+                    }
+                    else if(randCloudNum == 2)
+                    {
+                        cloudList.Add(new Cloud(this, Content, 1700, random));
+                    }
+                    
+                    
+                }
+            }
+
+            }
 
         /// <summary>
         /// This is called when the game should draw itself.
@@ -328,11 +412,16 @@ namespace MonoGameWindowsStarter
             spriteBatch.Begin();
             spriteBatch.Draw(Sky, new Rectangle(0,0,1920,1080), Color.White);
             spriteBatch.DrawString(TileIDFont, "Tile ID: " + tileLocationID, new Vector2(0, 0), Color.White);
+            foreach (Cloud cloud in cloudList)
+            {
+                cloud.Draw(spriteBatch);
+            }
             building.Draw(spriteBatch);
             foreach(Powerup powerup in powerupList)
             {
                 powerup.Draw(spriteBatch);
             }
+            
             player.Draw(spriteBatch);
             foreach (Plane plane in planeList)
             {
@@ -348,9 +437,18 @@ namespace MonoGameWindowsStarter
             {
                 milkbullet.Draw(spriteBatch);
             }
+            if (!isStarted)
+            {
+                Texture2D rect = new Texture2D(graphics.GraphicsDevice, 80, 30);
+                Color[] data = new Color[80 * 30];
+                for (int i = 0; i < data.Length; ++i) data[i] = Color.Chocolate;
+                rect.SetData(data);
+                spriteBatch.Draw(rect, new Rectangle(100, 200, 1700, 500), Color.Black);
+                spriteBatch.Draw(titleTexture, new Rectangle(200, 200, 1500, 500), Color.White);
+            }
             if (deadBaby)
             {
-                spriteBatch.DrawString(DeadFont, "You Dead, Press Enter to retry", new Vector2(600, 600), Color.White);
+                spriteBatch.DrawString(DeadFont, "Baby is Dead :'(, Press Enter to retry", new Vector2(500, 600), Color.White);
             }
             spriteBatch.End();
             base.Draw(gameTime);

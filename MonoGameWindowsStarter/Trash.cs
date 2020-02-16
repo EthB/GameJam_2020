@@ -46,8 +46,8 @@ namespace MonoGameWindowsStarter
         public void LoadContent(int xLocation, int yLocation)
         {
             texture = content.Load<Texture2D>("Trash");
-            bounds.Width = 180;
-            bounds.Height = 180;
+            bounds.Width = 150;
+            bounds.Height = 150;
             bounds.X = xLocation;
             bounds.Y = yLocation;
         }
