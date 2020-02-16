@@ -108,7 +108,10 @@ namespace MonoGameWindowsStarter
                 Exit();
             tileLocationID = building.FindTile();
             hitsTimer += gameTime.ElapsedGameTime.TotalSeconds;
-            
+            if(speed == 0)
+            {
+                speed = 5;
+            }
             //logic to check if plane should spawn
             AddPlane(gameTime);
             building.Update(gameTime);
@@ -251,10 +254,10 @@ namespace MonoGameWindowsStarter
             if (tileLocationID >= 5) //change hardcoded value
             {
                 randomCheckTimer += gameTime.ElapsedGameTime.TotalSeconds;
-                if (randomCheckTimer >= 10)
+                if (randomCheckTimer >= 5)
                 {
                     randomCheckTimer = 0;
-                    if (random.Next(1, 75) == 1)
+                    if (random.Next(1, 30) == 1)
                     {
                         if (planeList.Count == 1)
                         {
