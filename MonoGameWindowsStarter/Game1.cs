@@ -22,7 +22,7 @@ namespace MonoGameWindowsStarter
         public Player player;
         Building building;
         List<Plane> planeList = new List<Plane>();
-        List<Powerup> powerupList = new List<Powerup>();
+        public List<Powerup> powerupList = new List<Powerup>();
         Random random = new Random();
         int tileLocationID;
         private SpriteFont TileIDFont;
@@ -34,6 +34,7 @@ namespace MonoGameWindowsStarter
         Healthbar health2;
         Healthbar health3;
         public int hits = 3;
+        Texture2D Sky;
 
 
         public Game1()
@@ -70,14 +71,12 @@ namespace MonoGameWindowsStarter
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            building = new Building(this, 10, Content, graphics.GraphicsDevice);
+            building = new Building(this, 30, Content, graphics.GraphicsDevice);
             spriteBatch = new SpriteBatch(GraphicsDevice);
             player.LoadContent(Content);
             building.LoadContent();
             TileIDFont = Content.Load<SpriteFont>("TileLocation");
-            powerupList.Add(new BeanPowerup(this, Content, 550, 100));
-            powerupList.Add(new LollipopPowerup(this, Content, 690, 200));
-            powerupList.Add(new BottlePowerup(this, Content, 600, 600));
+            Sky = Content.Load<Texture2D>("Sky");
             health1.LoadContent(Content);
             health2.LoadContent(Content);
             health3.LoadContent(Content);
@@ -135,10 +134,14 @@ namespace MonoGameWindowsStarter
                 {
                     window.PushWindow();
                 }
+                foreach(Trash trash in building.trashList)
+                {
+                    trash.PushTrash();
+                }
             }
             if(player.bounds.Y <= 0)
             {
-                player.bounds.Y = 0;
+                player.bounds.Y = 3;
             }
             //Bottom Scrolling
             if(player.bounds.Y >= 900 && player.state > State.Idle)
@@ -152,6 +155,10 @@ namespace MonoGameWindowsStarter
                 foreach(Window window in building.windowSet)
                 {
                     window.PullWindow();
+                }
+                foreach(Trash trash in building.trashList)
+                {
+                    trash.PullTrash();
                 }
 
             }
@@ -187,18 +194,21 @@ namespace MonoGameWindowsStarter
 
             //powerups
 
-            foreach (Powerup powerup in powerupList)
+            for (int i = 0; i < powerupList.Count; i++)
             {
-                if (powerup.RectBounds.Intersects(player.RectBounds))
+                if (powerupList[i].RectBounds.Intersects(player.RectBounds))
                 {
-                    powerup.PickUp(this);
-                    powerup.Time = new TimeSpan(0);
+                    powerupList[i].PickUp(this);
+                    powerupList[i].Time = new TimeSpan(0);
                 }
-                if(powerup.Time.TotalSeconds > 5)
+                if (powerupList[i].Time.TotalSeconds > 5)
                 {
-                    powerup.TimeOut(this);
+                    powerupList[i].TimeOut(this);
+                    powerupList.RemoveAt(i);
+                    i--;
                 }
             }
+    
             if(Keyboard.GetState().IsKeyDown(Keys.Space)) {
                 if (hasBottle)
                 {
@@ -216,7 +226,8 @@ namespace MonoGameWindowsStarter
             {
                 if (milkBullets[i].delete)
                 {
-                    milkBullets.Remove(milkBullets[i]);
+                    milkBullets.RemoveAt(i);
+                    i--;
                 }
             }
 
@@ -268,14 +279,15 @@ namespace MonoGameWindowsStarter
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
+            spriteBatch.Draw(Sky, new Rectangle(0,0,1920,1080), Color.White);
             spriteBatch.DrawString(TileIDFont, "Tile ID: " + tileLocationID, new Vector2(0, 0), Color.White);
             building.Draw(spriteBatch);
-            player.Draw(spriteBatch);
             foreach(Powerup powerup in powerupList)
             {
                 powerup.Draw(spriteBatch);
             }
-            foreach(Plane plane in planeList)
+            player.Draw(spriteBatch);
+            foreach (Plane plane in planeList)
             {
                 plane.Draw(spriteBatch);
             }

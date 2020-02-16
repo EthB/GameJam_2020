@@ -55,7 +55,7 @@ namespace MonoGameWindowsStarter
             bounds.Width = 90;
             bounds.Height = 90;
             bounds.X = xLocation;
-            bounds.Y = yLocation;
+            bounds.Y = -yLocation;
         }
 
         public override void Update(GameTime gameTime)
@@ -100,7 +100,7 @@ namespace MonoGameWindowsStarter
             
                 pickedUp = true;
                 powerupTimer = new TimeSpan(0);
-            game.hasBottle = true;
+                game.hasBottle = true;
         }
 
         public override void TimeOut(Game1 game)

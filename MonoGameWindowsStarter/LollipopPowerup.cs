@@ -20,8 +20,8 @@ namespace MonoGameWindowsStarter
             const int FRAME_WIDTH = 29, FRAME_HEIGHT = 52, ANIMATION_FRAME_RATE = 124;
             TimeSpan timer;
             int frame, state;
-        bool pickedUp;
-        TimeSpan powerupTimer;
+            bool pickedUp;
+            TimeSpan powerupTimer;
         public override Rectangle RectBounds
         {
             get { return (Rectangle)bounds; }
@@ -54,7 +54,7 @@ namespace MonoGameWindowsStarter
                 bounds.Width = 90;
                 bounds.Height = 90;
                 bounds.X = xLocation;
-                bounds.Y = yLocation;
+                bounds.Y = -yLocation;
             }
 
             public override void Update(GameTime gameTime)
@@ -97,12 +97,13 @@ namespace MonoGameWindowsStarter
         public override void PickUp(Game1 game)
         {
             Random random = new Random();
+            bounds.Y = 2000;
             if (random.Next(1,100) != 69)
             {
                 pickedUp = true;
-                game.speed = 10;
+                game.speed += 5;
                 powerupTimer = new TimeSpan(0);
-                game.player.speed = 2;
+                game.player.speed += 1;
             }
             else
             {
@@ -112,9 +113,9 @@ namespace MonoGameWindowsStarter
 
         public override void TimeOut(Game1 game)
         {
-            game.speed = 5;
+            game.speed -= 5;
             pickedUp = false;
-            game.player.speed = 1;
+            game.player.speed -= 1;
         }
 
     }

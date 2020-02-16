@@ -21,7 +21,8 @@ namespace MonoGameWindowsStarter
         List<string> tileNames = new List<string> { "sprite_0", "sprite_1", "sprite_2", "sprite_3", "sprite_4", "sprite_5", "sprite_6" };
         Random random = new Random();
         int tileSize, windowCount;
-        List<Tuple<int,int>> windowLocations = new List<Tuple<int, int>>();
+        List<Tuple<int, int>> windowLocations = new List<Tuple<int, int>>();
+        public List<Trash> trashList = new List<Trash>();
     public Building(Game1 game, int tileSize, ContentManager content, GraphicsDevice graphicsDevice)
         {
             int randomWindowCount;
@@ -30,7 +31,6 @@ namespace MonoGameWindowsStarter
             this.graphicsDevice = graphicsDevice;
             this.tileSize = tileSize;
             tileSet.Add(new Tile(game, 0));
-           
             for (int i = 1; i < tileSize; i++)
             {
                 Tuple<int, int> location;
@@ -39,6 +39,25 @@ namespace MonoGameWindowsStarter
                 tileSet.Add(new Tile(game, tileSet[i - 1].bounds.Y - 1080));
                 if (i < tileSize - 2)
                 { 
+                    if(random.Next(1,3) == 1)
+                    {
+                        switch (random.Next(1, 3))
+                        {
+                            case 1:
+                                game.powerupList.Add(new LollipopPowerup(game, content, random.Next(520, 1200), (int)(random.Next(100, 900) - (tileSet[i - 1].bounds.Y - 1080))));
+                                break;
+                            case 2:
+                                game.powerupList.Add(new BottlePowerup(game, content, random.Next(520, 1200), (int)(random.Next(100, 900) - (tileSet[i - 1].bounds.Y - 1080))));
+                                break;
+                            case 3:
+                                game.powerupList.Add(new BeanPowerup(game, content, random.Next(520, 1200), (int)(random.Next(100, 900) - (tileSet[i - 1].bounds.Y - 1080))));
+                                break;
+
+                            default:
+                                break;
+                        }
+                     
+                    }
                     switch (randomWindowCount)
                     {
                         case 1:
@@ -75,6 +94,13 @@ namespace MonoGameWindowsStarter
                         default:
                             break;
                     }
+                }
+            }
+            foreach (Window window in windowSet)
+            {
+                if (random.Next(1,3) == 1)
+                {
+                    trashList.Add(new Trash(game, content, (int)window.bounds.X, (int)window.bounds.Y));
                 }
             }
             LoadContent();
@@ -114,6 +140,10 @@ namespace MonoGameWindowsStarter
             {
                 window.Update(gameTime);
             }
+            foreach(Trash trash in trashList)
+            {
+                trash.Update(gameTime);
+            }
         }
         public void PushTile(float speed)
         {
@@ -130,7 +160,7 @@ namespace MonoGameWindowsStarter
             }
         }
         public void Draw(SpriteBatch spriteBatch)
-        { 
+        {
             foreach(Tile tile in tileSet)
             {
                 if(!(tile.bounds.Y < -1080))
@@ -138,10 +168,15 @@ namespace MonoGameWindowsStarter
                     tile.Draw(spriteBatch);
                 }
             }
+            foreach (Trash trash in trashList)
+            {
+                trash.Draw(spriteBatch);
+            }
             foreach (Window window in windowSet)
             {
                 window.Draw(spriteBatch);
             }
+            
         }
     }
 }

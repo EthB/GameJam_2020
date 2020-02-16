@@ -53,7 +53,7 @@ namespace MonoGameWindowsStarter
             bounds.Width = 90;
             bounds.Height = 90;
             bounds.X = xLocation;
-            bounds.Y = yLocation;
+            bounds.Y = -yLocation;
         }
 
         public override void Update(GameTime gameTime)
@@ -94,17 +94,18 @@ namespace MonoGameWindowsStarter
 
         public override void PickUp(Game1 game)
         {
+            bounds.Y = 2000;
             pickedUp = true;
-            game.speed = 25;
-            game.player.speed = 20;
+            game.speed += 25;
+            game.player.speed += 20;
             game.player.FlyingBaby = true;
         }
 
         public override void TimeOut(Game1 game)
         {
             pickedUp = false;
-            game.speed = 5;
-            game.player.speed = 1;
+            game.speed -= 25;
+            game.player.speed -= 20;
             game.player.FlyingBaby = false;
 
         }

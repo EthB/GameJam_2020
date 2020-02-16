@@ -15,7 +15,7 @@ namespace MonoGameWindowsStarter
     {
         Game1 game;
         Texture2D texture;
-        BoundingRectangle bounds;
+        public BoundingRectangle bounds;
         const int FRAME_WIDTH = 780, FRAME_HEIGHT = 750, ANIMATION_FRAME_RATE = 200;
         TimeSpan timer;
         int frame, state, windowState, willBreak;
