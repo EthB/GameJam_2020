@@ -21,6 +21,7 @@ namespace MonoGameWindowsStarter
         SpriteBatch spriteBatch;
         Player player;
         Building building;
+        Window window;
         List<Plane> planeList = new List<Plane>();
         Random random;
         public Game1()
@@ -29,6 +30,7 @@ namespace MonoGameWindowsStarter
             Content.RootDirectory = "Content";
             player = new Player(this);
             building = new Building(this, 30);
+            window = new Window(this);
         }
 
         /// <summary>
@@ -44,6 +46,7 @@ namespace MonoGameWindowsStarter
             graphics.PreferredBackBufferHeight = 1080;
             //graphics.IsFullScreen = true;
             graphics.ApplyChanges();
+            window.Initialize();
             base.Initialize();
         }
 
@@ -57,6 +60,7 @@ namespace MonoGameWindowsStarter
             spriteBatch = new SpriteBatch(GraphicsDevice);
             player.LoadContent(Content);
             building.LoadContent(Content);
+            window.LoadContent();
             // TODO: use this.Content to load your game content here
         }
 
@@ -96,7 +100,8 @@ namespace MonoGameWindowsStarter
                
                 planeList.Add(new Plane(this, Content, 0));
             }
-
+            //update windows
+            window.Update(gameTime);
 
             foreach(Plane plane in planeList)
             {
@@ -144,6 +149,7 @@ namespace MonoGameWindowsStarter
             spriteBatch.Begin();
             building.Draw(spriteBatch);
             player.Draw(spriteBatch);
+            window.Draw(spriteBatch);
             foreach(Plane plane in planeList)
             {
                 plane.Draw(spriteBatch);
