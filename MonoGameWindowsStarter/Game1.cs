@@ -22,7 +22,7 @@ namespace MonoGameWindowsStarter
         public Player player;
         Building building;
         List<Plane> planeList;
-        List<Powerup> powerupList;
+        public List<Powerup> powerupList;
         Random random = new Random();
         int tileLocationID;
         private SpriteFont TileIDFont;
@@ -37,6 +37,7 @@ namespace MonoGameWindowsStarter
         public int hits;
         Texture2D Sky;
         double hitsTimer;
+        public bool deadBaby;
 
 
         public Game1()
