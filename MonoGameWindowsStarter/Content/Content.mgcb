@@ -218,6 +218,12 @@
 /processorParam:Quality=Best
 /build:glassBreak.wav
 
+#begin groove.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:groove.mp3
+
 #begin Lollipop.png
 /importer:TextureImporter
 /processor:TextureProcessor
