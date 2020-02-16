@@ -252,7 +252,7 @@ namespace MonoGameWindowsStarter
                         planeList[i].bulletList.RemoveAt(j);
                         j--;
                         //Player Health Done here
-                        if (!hasBottle)
+                        if (!hasBottle && !player.FlyingBaby)
                         {
                             hits--;
                             babyHit.Play();
@@ -272,7 +272,7 @@ namespace MonoGameWindowsStarter
 
             for (int i = 0; i < powerupList.Count; i++)
             {
-                if (powerupList[i].RectBounds.Intersects(player.RectBounds))
+                if (powerupList[i].RectBounds.Intersects(player.RectBounds) && !deadBaby)
                 {
                     score += 25;
                     powerupList[i].PickUp(this);
@@ -293,11 +293,12 @@ namespace MonoGameWindowsStarter
                     cracksList.Add(new Cracks(player, Content));
                     crackTimer = new TimeSpan(0);
                 }
-                else if (hasBottle)
+                else if (crackTimer.TotalMilliseconds > 200 && hasBottle)
                 {
                     milkBullets.Add(new MilkBullet(player.RectBounds, 1, Content));
                     milkBullets.Add(new MilkBullet(player.RectBounds, 2, Content));
                     milkBullets.Add(new MilkBullet(player.RectBounds, 3, Content));
+                    crackTimer = new TimeSpan(0);
                 }
             }
             crackTimer += gameTime.ElapsedGameTime;
@@ -342,7 +343,7 @@ namespace MonoGameWindowsStarter
             {
                 if(trash.RectBounds.Intersects(player.RectBounds) && hitsTimer >= 3)
                 {
-                    if (!hasBottle)
+                    if (!hasBottle && !player.FlyingBaby)
                     {
                         hits--;
                         hitsTimer = 0;
@@ -485,6 +486,7 @@ namespace MonoGameWindowsStarter
                 rect.SetData(data);
                 spriteBatch.Draw(rect, new Rectangle(100, 200, 1700, 500), Color.Black);
                 spriteBatch.Draw(titleTexture, new Rectangle(200, 200, 1500, 500), Color.White);
+                spriteBatch.DrawString(DeadFont, "Press 'Enter' to start", new Vector2(700, 630), Color.White);
             }
             if (deadBaby)
             {
