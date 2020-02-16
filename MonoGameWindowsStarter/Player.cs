@@ -24,8 +24,12 @@ namespace MonoGameWindowsStarter
         ContentManager content;
         Texture2D texture;
         Texture2D flyingBaby;
+        Texture2D cryingBaby;
         public BoundingRectangle bounds;
+        Rectangle deadBounds;
         const int ANIMATION_FRAME_RATE = 124;
+        const int DEAD_WIDTH = 47;
+        const int DEAD_HEIGHT = 30;
         const int FRAME_WIDTH = 256;
         const int FRAME_HEIGHT = 256;
         public State state = State.Idle;
@@ -33,10 +37,12 @@ namespace MonoGameWindowsStarter
         int frame;
         public float speed;
         public bool FlyingBaby;
+        bool lastState;
 
         public Player(Game1 game)
         {
             this.game = game;
+            
         }
         public Rectangle RectBounds
         {
@@ -48,56 +54,89 @@ namespace MonoGameWindowsStarter
             this.content = content;
             texture = content.Load<Texture2D>("Baby_Crawl");
             flyingBaby = content.Load<Texture2D>("Baby Projectile");
+            cryingBaby = content.Load<Texture2D>("Crying Baby");
 
             bounds.Width = 400;
             bounds.Height = 400;
             bounds.Y = game.GraphicsDevice.Viewport.Height - 200;
             bounds.X = game.GraphicsDevice.Viewport.Width / 2 - 200;
             speed = 1;
+
+            deadBounds = new Rectangle(0, 0, 400, 400);
+            lastState = false;
         }
 
         public void Update(GameTime gameTime)
         {
-            if (!FlyingBaby)
+            
+            if (game.deadBaby == true)
             {
+                
+                if (!lastState)
+                {
+                    deadBounds.X = (int)bounds.X;
+                    deadBounds.Y = (int)bounds.Y;
+                    lastState = true;
+                    if (deadBounds.Width > 188)
+                    {
+                        deadBounds.Width -= 12;
+                        deadBounds.Height -= 12;
+                    }
+                    
+                }
+                else
+                {
+                    if (deadBounds.Width > 188)
+                    {
+                        deadBounds.Width -= 12;
+                        deadBounds.Height -= 12;
+                    }
+                    bounds.Y += 3;
+                }
+            }
+            else
+            {
+                if (!FlyingBaby)
+                {
 
-                var keyboardState = Keyboard.GetState();
-                if (keyboardState.IsKeyDown(Keys.Up))
+                    var keyboardState = Keyboard.GetState();
+                    if (keyboardState.IsKeyDown(Keys.Up))
+                    {
+                        bounds.Y -= ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
+                        if (state == State.Idle) state = State.Moving;
+                    }
+                    if (keyboardState.IsKeyDown(Keys.Down))
+                    {
+                        bounds.Y += ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
+                        if (state == State.Idle) state = State.Moving;
+                    }
+                    if (keyboardState.IsKeyDown(Keys.Right))
+                    {
+                        bounds.X += ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
+                        if (state == State.Idle) state = State.Moving;
+                    }
+                    if (keyboardState.IsKeyDown(Keys.Left))
+                    {
+                        bounds.X -= ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
+                        if (state == State.Idle) state = State.Moving;
+                    }
+                    if (keyboardState.IsKeyUp(Keys.Up) && keyboardState.IsKeyUp(Keys.Down) && keyboardState.IsKeyUp(Keys.Left) && keyboardState.IsKeyUp(Keys.Right))
+                    {
+                        state = State.Idle;
+                    }
+                }
+                else
                 {
                     bounds.Y -= ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
-                    if (state == State.Idle) state = State.Moving;
-                }
-                if (keyboardState.IsKeyDown(Keys.Down))
-                {
-                    bounds.Y += ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
-                    if (state == State.Idle) state = State.Moving;
-                }
-                if (keyboardState.IsKeyDown(Keys.Right))
-                {
-                    bounds.X += ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
-                    if (state == State.Idle) state = State.Moving;
-                }
-                if (keyboardState.IsKeyDown(Keys.Left))
-                {
-                    bounds.X -= ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
-                    if (state == State.Idle) state = State.Moving;
-                }
-                if (keyboardState.IsKeyUp(Keys.Up) && keyboardState.IsKeyUp(Keys.Down) && keyboardState.IsKeyUp(Keys.Left) && keyboardState.IsKeyUp(Keys.Right))
-                {
-                    state = State.Idle;
                 }
             }
-            else
-            {
-                bounds.Y -= ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
-            }
-            if (!FlyingBaby)
+            if (FlyingBaby || game.deadBaby)
             { 
-                if (state != State.Idle) timer += gameTime.ElapsedGameTime;
+                timer += gameTime.ElapsedGameTime;
             }
             else
             {
-                timer += gameTime.ElapsedGameTime;
+                if (state != State.Idle) timer += gameTime.ElapsedGameTime;
             }
 
 
@@ -115,29 +154,59 @@ namespace MonoGameWindowsStarter
                 frame++;
                 timer -= new TimeSpan(0, 0, 0, 0, ANIMATION_FRAME_RATE);
             }
-           
-            frame %= 1;
+            if (game.deadBaby)
+            {
+                frame %= 5;
+            }
+            else {
+                frame %= 1;
+            }
+
         }
         
         public void Draw(SpriteBatch spriteBatch)
         {
-            if(!FlyingBaby)
+            if (game.deadBaby)
             {
-                var source = new Rectangle(
-                frame * FRAME_WIDTH,
-                (int)state % 4 * FRAME_HEIGHT,
-                FRAME_WIDTH,
-                FRAME_HEIGHT);
-                spriteBatch.Draw(texture, bounds, source, Color.White);
+                if (!lastState)
+                {
+                    var source = new Rectangle(
+                    0,
+                    frame % 5 * DEAD_HEIGHT,
+                    DEAD_WIDTH,
+                    DEAD_HEIGHT);
+                    spriteBatch.Draw(cryingBaby, bounds, source, Color.White);
+                }
+                else
+                {
+                    var source = new Rectangle(
+                        0,
+                        frame % 5 * DEAD_HEIGHT,
+                        DEAD_WIDTH,
+                        DEAD_HEIGHT);
+                    spriteBatch.Draw(cryingBaby, deadBounds, source, Color.White);
+                }
             }
             else
             {
-              var source = new Rectangle(
-              frame * FRAME_WIDTH,
-              (int)state % 4 * FRAME_HEIGHT,
-              FRAME_WIDTH,
-              FRAME_HEIGHT);
-                spriteBatch.Draw(flyingBaby, bounds, source, Color.White);
+                if (!FlyingBaby)
+                {
+                    var source = new Rectangle(
+                    frame * FRAME_WIDTH,
+                    (int)state % 4 * FRAME_HEIGHT,
+                    FRAME_WIDTH,
+                    FRAME_HEIGHT);
+                    spriteBatch.Draw(texture, bounds, source, Color.White);
+                }
+                else
+                {
+                    var source = new Rectangle(
+                    frame * FRAME_WIDTH,
+                    (int)state % 4 * FRAME_HEIGHT,
+                    FRAME_WIDTH,
+                    FRAME_HEIGHT);
+                    spriteBatch.Draw(flyingBaby, bounds, source, Color.White);
+                }
             }
             
         }
