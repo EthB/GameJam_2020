@@ -97,7 +97,7 @@ namespace MonoGameWindowsStarter
         public override void PickUp(Game1 game)
         {
             Random random = new Random();
-            if (random.Next(1,100) == 69)
+            if (random.Next(1,100) != 69)
             {
                 pickedUp = true;
                 game.speed = 10;

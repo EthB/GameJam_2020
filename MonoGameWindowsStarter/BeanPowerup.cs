@@ -81,23 +81,31 @@ namespace MonoGameWindowsStarter
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            var source = new Rectangle(
-                frame * FRAME_WIDTH,
-                state % 7 * FRAME_HEIGHT,
-                FRAME_WIDTH,
-                FRAME_HEIGHT);
-            spriteBatch.Draw(texture, bounds, source, Color.White);
+            if (!pickedUp)
+            { 
+                var source = new Rectangle(
+                    frame * FRAME_WIDTH,
+                    state % 7 * FRAME_HEIGHT,
+                    FRAME_WIDTH,
+                    FRAME_HEIGHT);
+                spriteBatch.Draw(texture, bounds, source, Color.White);
+            }
         }
 
         public override void PickUp(Game1 game)
         {
             pickedUp = true;
-
+            game.speed = 25;
+            game.player.speed = 20;
+            game.player.FlyingBaby = true;
         }
 
         public override void TimeOut(Game1 game)
         {
             pickedUp = false;
+            game.speed = 5;
+            game.player.speed = 5;
+            game.player.FlyingBaby = false;
 
         }
 

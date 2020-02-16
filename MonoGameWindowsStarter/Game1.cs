@@ -233,16 +233,17 @@ namespace MonoGameWindowsStarter
             spriteBatch.Begin();
             spriteBatch.DrawString(TileIDFont, "Tile ID: " + tileLocationID, new Vector2(0, 0), Color.White);
             building.Draw(spriteBatch);
-            player.Draw(spriteBatch);
-            foreach(Powerup powerup in powerupList)
-            {
-                powerup.Draw(spriteBatch);
-            }
+            
             foreach(Plane plane in planeList)
             {
                 plane.Draw(spriteBatch);
             }
-            
+            foreach (Powerup powerup in powerupList)
+            {
+                powerup.Draw(spriteBatch);
+            }
+            player.Draw(spriteBatch);
+
             spriteBatch.End();
             base.Draw(gameTime);
         }
