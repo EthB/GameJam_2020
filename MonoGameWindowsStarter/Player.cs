@@ -23,6 +23,7 @@ namespace MonoGameWindowsStarter
         Game1 game;
         ContentManager content;
         Texture2D texture;
+        Texture2D flyingBaby;
         public BoundingRectangle bounds;
         const int ANIMATION_FRAME_RATE = 124;
         const int FRAME_WIDTH = 256;
@@ -31,6 +32,7 @@ namespace MonoGameWindowsStarter
         TimeSpan timer;
         int frame;
         public float speed;
+        public bool FlyingBaby;
 
         public Player(Game1 game)
         {
@@ -45,6 +47,7 @@ namespace MonoGameWindowsStarter
         {
             this.content = content;
             texture = content.Load<Texture2D>("Baby_Crawl");
+            flyingBaby = content.Load<Texture2D>("Baby Projectile");
 
             bounds.Width = 400;
             bounds.Height = 400;
@@ -55,57 +58,88 @@ namespace MonoGameWindowsStarter
 
         public void Update(GameTime gameTime)
         {
-            var keyboardState = Keyboard.GetState();
-            if(keyboardState.IsKeyDown(Keys.Up))
+            if (!FlyingBaby)
+            {
+
+                var keyboardState = Keyboard.GetState();
+                if (keyboardState.IsKeyDown(Keys.Up))
+                {
+                    bounds.Y -= ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
+                    if (state == State.Idle) state = State.Moving;
+                }
+                if (keyboardState.IsKeyDown(Keys.Down))
+                {
+                    bounds.Y += ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
+                    if (state == State.Idle) state = State.Moving;
+                }
+                if (keyboardState.IsKeyDown(Keys.Right))
+                {
+                    bounds.X += ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
+                    if (state == State.Idle) state = State.Moving;
+                }
+                if (keyboardState.IsKeyDown(Keys.Left))
+                {
+                    bounds.X -= ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
+                    if (state == State.Idle) state = State.Moving;
+                }
+                if (keyboardState.IsKeyUp(Keys.Up) && keyboardState.IsKeyUp(Keys.Down) && keyboardState.IsKeyUp(Keys.Left) && keyboardState.IsKeyUp(Keys.Right))
+                {
+                    state = State.Idle;
+                }
+            }
+            else
             {
                 bounds.Y -= ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
-                if(state == State.Idle)state = State.Moving;
             }
-            if(keyboardState.IsKeyDown(Keys.Down))
+            if (!FlyingBaby)
+            { 
+                if (state != State.Idle) timer += gameTime.ElapsedGameTime;
+            }
+            else
             {
-                bounds.Y += ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
-                if (state == State.Idle) state = State.Moving;
+                timer += gameTime.ElapsedGameTime;
             }
-            if(keyboardState.IsKeyDown(Keys.Right))
-            {
-                bounds.X += ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
-                if (state == State.Idle) state = State.Moving;
-            }
-            if(keyboardState.IsKeyDown(Keys.Left))
-            {
-                bounds.X -= ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
-                if (state == State.Idle) state = State.Moving;
-            }
-            if(keyboardState.IsKeyUp(Keys.Up) && keyboardState.IsKeyUp(Keys.Down) && keyboardState.IsKeyUp(Keys.Left) && keyboardState.IsKeyUp(Keys.Right))
-            {
-                state = State.Idle;
-            }
-            if (state != State.Idle) timer += gameTime.ElapsedGameTime;
 
-            while(timer.TotalMilliseconds > ANIMATION_FRAME_RATE)
+
+
+            while (timer.TotalMilliseconds > ANIMATION_FRAME_RATE)
             {
-                if(state < State.MovingEnd)
+                if (state < State.MovingEnd)
                 {
                     state++;
                 }
-                else if(state == State.MovingEnd)
+                else if (state == State.MovingEnd)
                 {
                     state = State.Idle;
                 }
                 frame++;
                 timer -= new TimeSpan(0, 0, 0, 0, ANIMATION_FRAME_RATE);
             }
-
+           
             frame %= 1;
         }
+        
         public void Draw(SpriteBatch spriteBatch)
         {
-            var source = new Rectangle(
+            if(!FlyingBaby)
+            {
+                var source = new Rectangle(
                 frame * FRAME_WIDTH,
                 (int)state % 4 * FRAME_HEIGHT,
                 FRAME_WIDTH,
                 FRAME_HEIGHT);
-            spriteBatch.Draw(texture, bounds, source, Color.White);
+                spriteBatch.Draw(texture, bounds, source, Color.White);
+            }
+            else
+            {
+              var source = new Rectangle(
+              frame * FRAME_WIDTH,
+              (int)state % 4 * FRAME_HEIGHT,
+              FRAME_WIDTH,
+              FRAME_HEIGHT);
+                spriteBatch.Draw(flyingBaby, bounds, source, Color.White);
+            }
+            
         }
     }
 

@@ -13,6 +13,18 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Baby Projectile (2).png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Baby Projectile (2).png;Baby Projectile.png
+
 #begin Baby Rattle.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -73,6 +85,18 @@
 /processorParam:TextureFormat=Color
 /build:Dot.png
 
+#begin Glass Window Tiles.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Glass Window Tiles.png;Window.png
+
 #begin Lollipop.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -84,18 +108,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Lollipop.png
-
-#begin Pepto.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Pepto.png
 
 #begin planeBlue.png
 /importer:TextureImporter
@@ -235,16 +247,4 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:upscaled building textures/sprite_8.png
-
-#begin window.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:window.png
 
