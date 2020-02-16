@@ -157,6 +157,10 @@ namespace MonoGameWindowsStarter
                 }
             }
             hitsTimer += gameTime.ElapsedGameTime.TotalSeconds;
+            if(speed > 150)
+            {
+                speed = 150;
+            }
             if(speed <= 0)
             {
                 speed = 5;
@@ -451,8 +455,7 @@ namespace MonoGameWindowsStarter
             // TODO: Add your drawing code here
             spriteBatch.Begin();
             spriteBatch.Draw(Sky, new Rectangle(0,0,1920,1080), Color.White);
-            spriteBatch.DrawString(TileIDFont, "Score: " + (int)score, new Vector2(0, 0), Color.White);
-            spriteBatch.DrawString(TileIDFont, "Floor: " + (tileLocationID + 1), new Vector2(0, 20), Color.White);
+            
             foreach (Cloud cloud in cloudList)
             {
                 cloud.Draw(spriteBatch);
@@ -494,8 +497,10 @@ namespace MonoGameWindowsStarter
             }
             if (deadBaby)
             {
-                spriteBatch.DrawString(DeadFont, "Game Over, Press Enter to retry", new Vector2(500, 600), Color.White);
+                spriteBatch.DrawString(DeadFont, "Game Over, Press Enter to retry", new Vector2(600, 500), Color.White);
             }
+            spriteBatch.DrawString(TileIDFont, "Score: " + (int)score, new Vector2(0, 0), Color.White);
+            spriteBatch.DrawString(TileIDFont, "Floor: " + (tileLocationID + 1), new Vector2(0, 26), Color.White);
             spriteBatch.End();
             base.Draw(gameTime);
         }
