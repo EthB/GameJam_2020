@@ -8,14 +8,17 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
+
 namespace MonoGameWindowsStarter
 {
     class MilkBullet
     {
-        Rectangle bounds;
+        public Rectangle bounds;
         Vector2 direction;
         Texture2D texture;
         public bool delete = false;
+        float color;
+        Random random = new Random();
         public MilkBullet(Rectangle origin, int num, ContentManager content)
         {
             texture = content.Load<Texture2D>("bulletBlue");
@@ -39,7 +42,7 @@ namespace MonoGameWindowsStarter
 
         public void LoadContent(ContentManager content)
         {
-            
+            //color = Color.Red;
         }
         public void Update(GameTime gameTime)
         {
@@ -59,7 +62,45 @@ namespace MonoGameWindowsStarter
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, bounds, Color.Black);
+            spriteBatch.Draw(texture, bounds, RandomColor(random.Next(0,6)));
         }
+
+        public Color RandomColor(int r)
+        {
+
+            if (r == 0)
+            {
+                return Color.Red;
+            }
+            else if (r == 1)
+            {
+                return Color.Orange;
+            }
+            else if (r == 2)
+            {
+                return Color.Yellow;
+            }
+            else if (r == 3)
+            {
+                return Color.Green;
+            }
+            else if (r == 4)
+            {
+                return Color.Blue;
+            }
+            else if (r == 5)
+            {
+                return Color.Indigo;
+            }
+            else if (r == 6)
+            {
+                return Color.Purple;
+            }
+            else
+            {
+                return Color.Red;
+            }
+        }
+
     }
 }
