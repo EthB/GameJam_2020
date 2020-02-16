@@ -27,6 +27,7 @@ namespace MonoGameWindowsStarter
         int frame;
         int planeState = 0;
         Random random;
+        SoundEffect plane_shot;
 
 
 
@@ -48,6 +49,7 @@ namespace MonoGameWindowsStarter
             bounds.Height = 170;
             bounds.X = location;
             bounds.Y = -10;
+            plane_shot = content.Load<SoundEffect>("plane_shotWAV");
         }
         double shootLag = 0;
         double moveLag = 0;
@@ -63,10 +65,12 @@ namespace MonoGameWindowsStarter
                 if(bounds.X < 960)
                 {
                     bulletList.Add(new Bullet(game, content, (int)bounds.X, (int)bounds.Y, 0));
+                    plane_shot.Play();
                 }
                 if(bounds.X > 960)
                 {
                     bulletList.Add(new Bullet(game, content, (int)bounds.X,(int)bounds.Y, 1));
+                    plane_shot.Play();
                 }
                 
                 shootLag = 0;

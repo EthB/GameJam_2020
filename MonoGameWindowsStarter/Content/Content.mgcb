@@ -49,6 +49,12 @@
 /processorParam:TextureFormat=Color
 /build:Baby_Crawl.png
 
+#begin baby_hit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:baby_hit.wav
+
 #begin Bean_Can.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -60,6 +66,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Bean_Can.png
+
+#begin Brass.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Brass.mp3
 
 #begin bulletBlueSilver_outline.png
 /importer:TextureImporter
@@ -140,6 +152,18 @@
 /processorParam:TextureFormat=Color
 /build:Glass Window Tiles.png;Window.png
 
+#begin glass.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:glass.mp3
+
+#begin glassBreak.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:glassBreak.wav
+
 #begin Lollipop.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -151,6 +175,36 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Lollipop.png
+
+#begin out_window.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:out_window.mp3
+
+#begin plane_explode.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:plane_explode.mp3
+
+#begin plane_explodeWAV.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:plane_explodeWAV.wav
+
+#begin plane_shot_4.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:plane_shot_4.mp3
+
+#begin plane_shotWAV.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:plane_shotWAV.wav
 
 #begin planeBlue.png
 /importer:TextureImporter
@@ -164,6 +218,18 @@
 /processorParam:TextureFormat=Color
 /build:planeBlue.png
 
+#begin power_up.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:power_up.mp3
+
+#begin power_upWAV.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:power_upWAV.wav
+
 #begin Rotating Baby Bottle.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -175,6 +241,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Rotating Baby Bottle.png
+
+#begin shuffle.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:shuffle.mp3
 
 #begin sky.png
 /importer:TextureImporter

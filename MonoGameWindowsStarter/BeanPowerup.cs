@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Audio;
 
 namespace MonoGameWindowsStarter
 {
@@ -21,6 +22,7 @@ namespace MonoGameWindowsStarter
         int frame, state;
         TimeSpan powerupTimer;
         bool pickedUp;
+        SoundEffect powerUpSound;
 
         public override Rectangle RectBounds
         {
@@ -54,6 +56,7 @@ namespace MonoGameWindowsStarter
             bounds.Height = 90;
             bounds.X = xLocation;
             bounds.Y = -yLocation;
+            powerUpSound = content.Load<SoundEffect>("power_upWAV");
         }
 
         public override void Update(GameTime gameTime)
@@ -96,6 +99,7 @@ namespace MonoGameWindowsStarter
         {
             bounds.Y = 2000;
             pickedUp = true;
+            powerUpSound.Play();
             game.speed += 25;
             game.player.speed += 20;
             game.player.FlyingBaby = true;

@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 
 namespace MonoGameWindowsStarter
 {
@@ -23,6 +24,7 @@ namespace MonoGameWindowsStarter
         double windowTimer;
         Random random;
         bool hasChecked = false, setState = false;
+        SoundEffect glassShatter;
 
         public Window(Game1 game, ContentManager content,Random random, int xLocation, int yLocation)
         { 
@@ -39,6 +41,7 @@ namespace MonoGameWindowsStarter
             bounds.Height = 200;
             bounds.X = xLocation;
             bounds.Y = yLocation;
+            glassShatter = content.Load<SoundEffect>("glassBreak");
         }
 
         public void PushWindow()
@@ -70,6 +73,7 @@ namespace MonoGameWindowsStarter
             if (isBroken)
             {
                 windowState = 2;
+                //glassShatter.Play();
             }
             else
             {

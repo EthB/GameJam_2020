@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Audio;
-
+using Microsoft.Xna.Framework.Media;
 
 namespace MonoGameWindowsStarter
 {
@@ -38,6 +38,9 @@ namespace MonoGameWindowsStarter
         Texture2D Sky;
         double hitsTimer;
         public bool deadBaby;
+        Song backgroundSong;
+        SoundEffect planeExplode;
+        SoundEffect babyHit;
 
 
         public Game1()
@@ -98,6 +101,11 @@ namespace MonoGameWindowsStarter
             {
                 milkbullet.LoadContent(Content);
             }
+            
+            backgroundSong = Content.Load<Song>("Brass");
+            MediaPlayer.Play(backgroundSong);
+            planeExplode = Content.Load<SoundEffect>("plane_explodeWAV");
+            babyHit = Content.Load<SoundEffect>("baby_hit");
             // TODO: use this.Content to load your game content here
         }
 
@@ -204,11 +212,12 @@ namespace MonoGameWindowsStarter
                         j--;
                         //Player Health Done here
                         hits--;
+                        babyHit.Play();
                     }
                 }
                 if(player.RectBounds.Intersects(planeList[i].RectBounds) && Keyboard.GetState().IsKeyDown(Keys.Space))
                 {
-                    
+                    planeExplode.Play();
                     planeList.RemoveAt(i);
                     i--;
                 }
@@ -259,6 +268,7 @@ namespace MonoGameWindowsStarter
                 {
                     hits--;
                     hitsTimer = 0;
+                    babyHit.Play();
                 }
             }
 
