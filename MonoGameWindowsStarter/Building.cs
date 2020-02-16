@@ -41,7 +41,7 @@ namespace MonoGameWindowsStarter
                 { 
                     if(random.Next(1,3) == 1)
                     {
-                        switch (random.Next(1, 3))
+                        switch (random.Next(1, 4))
                         {
                             case 1:
                                 game.powerupList.Add(new LollipopPowerup(game, content, random.Next(520, 1200), (int)(random.Next(100, 900) - (tileSet[i - 1].bounds.Y - 1080))));

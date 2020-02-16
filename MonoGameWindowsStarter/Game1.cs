@@ -84,7 +84,7 @@ namespace MonoGameWindowsStarter
             deadBaby = false;
             double hitsTimer = 0;
             // Create a new SpriteBatch, which can be used to draw textures.
-            building = new Building(this, 10, Content, graphics.GraphicsDevice);
+            building = new Building(this, 700, Content, graphics.GraphicsDevice);
             spriteBatch = new SpriteBatch(GraphicsDevice);
             player.LoadContent(Content);
             building.LoadContent();
@@ -126,7 +126,7 @@ namespace MonoGameWindowsStarter
                 Restart();
             }
             hitsTimer += gameTime.ElapsedGameTime.TotalSeconds;
-            if(speed == 0)
+            if(speed <= 0)
             {
                 speed = 5;
             }
@@ -161,9 +161,9 @@ namespace MonoGameWindowsStarter
                     trash.PushTrash();
                 }
             }
-            if(player.bounds.Y <= 0)
+            if(player.bounds.Y <= 300)
             {
-                player.bounds.Y = 3;
+                player.bounds.Y = 300;
             }
             //Bottom Scrolling
             if(player.bounds.Y >= 900 && player.state > State.Idle)
@@ -268,7 +268,14 @@ namespace MonoGameWindowsStarter
                 deadBaby = true;
             }
 
-
+            if(building.tileSet[building.tileSet.Count - 1].bounds.Y >= -200)
+            {
+                if(player.bounds.Y <= 200)
+                {
+                    speed = 0.001f;
+                    player.bounds.Y = 200;
+                }
+            }
 
             base.Update(gameTime);
         }
