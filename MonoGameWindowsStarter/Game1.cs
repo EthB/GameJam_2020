@@ -22,12 +22,13 @@ namespace MonoGameWindowsStarter
         public Player player;
         Building building;
         List<Plane> planeList;
+        List<Cloud> cloudList;
         public List<Powerup> powerupList;
         Random random = new Random();
         int tileLocationID;
         private SpriteFont TileIDFont;
         private SpriteFont DeadFont;
-        double randomCheckTimer;
+        double randomCheckTimer, randomCloudTimer;
         public float speed;
         public bool hasBottle;
         List<MilkBullet> milkBullets;
@@ -76,7 +77,9 @@ namespace MonoGameWindowsStarter
             health3 = new Healthbar(this, 200, 950);
             planeList = new List<Plane>();
             powerupList = new List<Powerup>();
+            cloudList = new List<Cloud>();
             randomCheckTimer = 0;
+            randomCloudTimer = 0;
             float speed = 5;
             bool hasBottle = false;
             milkBullets = new List<MilkBullet>();
@@ -132,6 +135,7 @@ namespace MonoGameWindowsStarter
             }
             //logic to check if plane should spawn
             AddPlane(gameTime);
+            AddCloud(gameTime);
             building.Update(gameTime);
             foreach(Powerup powerup in powerupList)
             {
@@ -140,6 +144,10 @@ namespace MonoGameWindowsStarter
             foreach(Plane plane in planeList)
             {
                 plane.Update(gameTime);
+            }
+            foreach(Cloud cloud in cloudList)
+            {
+                cloud.Update(gameTime);
             }
 
             player.Update(gameTime);
@@ -159,6 +167,10 @@ namespace MonoGameWindowsStarter
                 foreach(Trash trash in building.trashList)
                 {
                     trash.PushTrash();
+                }
+                foreach(Cloud cloud in cloudList)
+                {
+                    cloud.PushCloud();
                 }
             }
             if(player.bounds.Y <= 300)
@@ -181,6 +193,10 @@ namespace MonoGameWindowsStarter
                 foreach(Trash trash in building.trashList)
                 {
                     trash.PullTrash();
+                }
+                foreach(Cloud cloud in cloudList)
+                {
+                    cloud.PullCloud();
                 }
 
             }
@@ -252,6 +268,14 @@ namespace MonoGameWindowsStarter
                     i--;
                 }
             }
+            for (int i = 0; i < cloudList.Count; i++)
+            {
+                if(cloudList[i].isVisible == false)
+                {
+                    cloudList.RemoveAt(i);
+                    i--;
+                }
+            }
 
             foreach(Trash trash in building.trashList)
             {
@@ -309,9 +333,30 @@ namespace MonoGameWindowsStarter
                     }
                 }
             }
-
-            
         }
+            public void AddCloud(GameTime gameTime)
+            {
+                if(tileLocationID >= 2)
+                {
+                randomCloudTimer += gameTime.ElapsedGameTime.TotalSeconds;
+                if(randomCloudTimer >= 2)
+                {
+                    randomCloudTimer = 0;
+                    int randCloudNum = random.Next(1, 5);
+                    if(randCloudNum == 1)
+                    {
+                        cloudList.Add(new Cloud(this, Content, 0, random));
+                    }
+                    else if(randCloudNum == 2)
+                    {
+                        cloudList.Add(new Cloud(this, Content, 1700, random));
+                    }
+                    
+                    
+                }
+            }
+
+            }
 
         /// <summary>
         /// This is called when the game should draw itself.
@@ -325,11 +370,16 @@ namespace MonoGameWindowsStarter
             spriteBatch.Begin();
             spriteBatch.Draw(Sky, new Rectangle(0,0,1920,1080), Color.White);
             spriteBatch.DrawString(TileIDFont, "Tile ID: " + tileLocationID, new Vector2(0, 0), Color.White);
+            foreach (Cloud cloud in cloudList)
+            {
+                cloud.Draw(spriteBatch);
+            }
             building.Draw(spriteBatch);
             foreach(Powerup powerup in powerupList)
             {
                 powerup.Draw(spriteBatch);
             }
+            
             player.Draw(spriteBatch);
             foreach (Plane plane in planeList)
             {
