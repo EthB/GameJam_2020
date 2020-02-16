@@ -35,6 +35,7 @@ namespace MonoGameWindowsStarter
         Healthbar health3;
         public int hits = 3;
         Texture2D Sky;
+        double hitsTimer = 0;
 
 
         public Game1()
@@ -106,7 +107,7 @@ namespace MonoGameWindowsStarter
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             tileLocationID = building.FindTile();
-
+            hitsTimer += gameTime.ElapsedGameTime.TotalSeconds;
             
             //logic to check if plane should spawn
             AddPlane(gameTime);
@@ -228,6 +229,15 @@ namespace MonoGameWindowsStarter
                 {
                     milkBullets.RemoveAt(i);
                     i--;
+                }
+            }
+
+            foreach(Trash trash in building.trashList)
+            {
+                if(trash.RectBounds.Intersects(player.RectBounds) && hitsTimer >= 3)
+                {
+                    hits--;
+                    hitsTimer = 0;
                 }
             }
 

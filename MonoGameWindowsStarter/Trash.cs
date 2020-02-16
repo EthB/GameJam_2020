@@ -34,6 +34,10 @@ namespace MonoGameWindowsStarter
         {
             bounds.Y += game.speed;
         }
+        public Rectangle RectBounds
+        {
+            get { return (Rectangle)bounds; }
+        }
         public void PullTrash()
         {
             bounds.Y -= game.speed;
