@@ -27,7 +27,9 @@ namespace MonoGameWindowsStarter
         int tileLocationID;
         private SpriteFont TileIDFont;
         double randomCheckTimer = 0;
-        public int speed;
+        public float speed = 5;
+        public bool hasBottle = false;
+        List<MilkBullet> milkBullets = new List<MilkBullet>();
         Healthbar health1;
         Healthbar health2;
         Healthbar health3;
@@ -79,6 +81,10 @@ namespace MonoGameWindowsStarter
             health1.LoadContent(Content);
             health2.LoadContent(Content);
             health3.LoadContent(Content);
+            foreach (MilkBullet milkbullet in milkBullets)
+            {
+                milkbullet.LoadContent(Content);
+            }
             // TODO: use this.Content to load your game content here
         }
 
@@ -193,8 +199,28 @@ namespace MonoGameWindowsStarter
                     powerup.TimeOut(this);
                 }
             }
+            if(Keyboard.GetState().IsKeyDown(Keys.Space)) {
+                if (hasBottle)
+                {
+                    milkBullets.Add(new MilkBullet(player.RectBounds, 1, Content));
+                    milkBullets.Add(new MilkBullet(player.RectBounds, 2, Content));
+                    milkBullets.Add(new MilkBullet(player.RectBounds, 3, Content));
+                }
+            }
+            foreach (MilkBullet milkbullet in milkBullets)
+            {
+                milkbullet.Update(gameTime);
 
-            
+            }
+            for (int i = 1; i < milkBullets.Count(); i++)
+            {
+                if (milkBullets[i].delete)
+                {
+                    milkBullets.Remove(milkBullets[i]);
+                }
+            }
+
+
 
             base.Update(gameTime);
         }
@@ -259,7 +285,10 @@ namespace MonoGameWindowsStarter
                 health2.Draw(spriteBatch);
             if (hits >= 1)
                 health1.Draw(spriteBatch);
-
+            foreach (MilkBullet milkbullet in milkBullets)
+            {
+                milkbullet.Draw(spriteBatch);
+            }
             spriteBatch.End();
             base.Draw(gameTime);
         }

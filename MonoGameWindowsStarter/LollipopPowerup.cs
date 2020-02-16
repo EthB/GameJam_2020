@@ -104,6 +104,10 @@ namespace MonoGameWindowsStarter
                 powerupTimer = new TimeSpan(0);
                 game.player.speed = 2;
             }
+            else
+            {
+                //CHOKE AND DIE
+            }
         }
 
         public override void TimeOut(Game1 game)
