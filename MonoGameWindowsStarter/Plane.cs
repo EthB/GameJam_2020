@@ -18,21 +18,28 @@ namespace MonoGameWindowsStarter
         Texture2D texture;
         ContentManager content;
         TimeSpan timer;
-        int flightDirection = 5;
+        int yFlightDirection = 5;
+        int xflightDirection = 0;
         public List<Bullet> bulletList = new List<Bullet>();
         const int ANIMATION_FRAME_RATE = 124;
         const int FRAME_WIDTH = 1320;
         const int FRAME_HEIGHT = 1095;
         int frame;
         int planeState = 0;
+        Random random;
 
 
 
-        public Plane(Game1 game, ContentManager content, int location)
+        public Plane(Game1 game, ContentManager content, int location, Random random)
         {
             this.game = game;
             this.content = content;
+            this.random = random;
             LoadContent(location);
+        }
+        public Rectangle RectBounds
+        {
+            get { return bounds; }
         }
         public void LoadContent(int location)
         {
@@ -40,22 +47,57 @@ namespace MonoGameWindowsStarter
             bounds.Width = 220;
             bounds.Height = 170;
             bounds.X = location;
-            bounds.Y = 0;
+            bounds.Y = -10;
         }
+        double shootLag = 0;
+        double moveLag = 0;
         public void Update(GameTime gameTime)
         {
-            bounds.Y += flightDirection;
+
+            bounds.Y += yFlightDirection;
+            bounds.X += xflightDirection;
+            shootLag += gameTime.ElapsedGameTime.TotalSeconds;
+            moveLag += gameTime.ElapsedGameTime.TotalSeconds;
+            if(shootLag >= random.Next(3,25) && xflightDirection == 0)
+            {
+                if(bounds.X < 960)
+                {
+                    bulletList.Add(new Bullet(game, content, (int)bounds.X, (int)bounds.Y, 0));
+                }
+                if(bounds.X > 960)
+                {
+                    bulletList.Add(new Bullet(game, content, (int)bounds.X,(int)bounds.Y, 1));
+                }
+                
+                shootLag = 0;
+            }
+
+            if(moveLag >= random.Next(10, 15))
+            {
+                MovePlane(gameTime);
+                moveLag = -5;
+            }
             foreach(Bullet bullet in bulletList)
             {
                 bullet.Update(gameTime);
             }
             if(bounds.Y >= 1080)
             {
-                flightDirection = -5;
+                yFlightDirection = -5;
             }
             if(bounds.Y <= 0)
             {
-                flightDirection = 5;
+                yFlightDirection = 5;
+            }
+            if(bounds.X < -1)
+            {
+                xflightDirection = 0;
+                bounds.X = 0;
+            }
+            if(bounds.X > 1700)
+            {
+                xflightDirection = 0;
+                bounds.X = 1700;
             }
             timer += gameTime.ElapsedGameTime;
             while (timer.TotalMilliseconds > ANIMATION_FRAME_RATE)
@@ -71,8 +113,26 @@ namespace MonoGameWindowsStarter
                 frame++;
                 timer -= new TimeSpan(0, 0, 0, 0, ANIMATION_FRAME_RATE);
             }
-
+            for (int i = 0; i < bulletList.Count; i++)
+            {
+                if(!bulletList[i].isVisible)
+                {
+                    bulletList.RemoveAt(i);
+                    i--;
+                }
+            }
             frame %= 1;
+        }
+        public void MovePlane(GameTime gameTime)
+        {
+            if(bounds.X < 560)
+            {
+                    xflightDirection += 5;
+            }
+            else
+            {
+                    xflightDirection -= 5;
+            }
         }
         public new void Draw(SpriteBatch spriteBatch)
         {

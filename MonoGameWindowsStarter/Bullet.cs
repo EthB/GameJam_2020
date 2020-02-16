@@ -16,7 +16,7 @@ namespace MonoGameWindowsStarter
         BoundingRectangle bounds;
         Texture2D texture;
         bool isvisible = true;
-
+        int direction;
         public BoundingRectangle Bounds
         {
             get { return bounds; }
@@ -31,22 +31,30 @@ namespace MonoGameWindowsStarter
             get { return isvisible; }
         }
 
-        public Bullet(Game1 game, ContentManager content, int boundsX, int boundsY)
+        public Bullet(Game1 game, ContentManager content, int boundsX, int boundsY, int direction)
         {
             this.game = game;
+            this.direction = direction;
             LoadContent(content, boundsX, boundsY);
         }
         public void LoadContent(ContentManager content, int boundsX, int boundsY)
         {
             texture = content.Load<Texture2D>("bulletBlue");
-            bounds.Width = 34;
-            bounds.Height = 20;
+            bounds.Width = 68;
+            bounds.Height = 40;
             bounds.X = boundsX;
             bounds.Y = boundsY;
         }
         public void Update(GameTime gameTime)
         {
-            bounds.X += 3 * (float)gameTime.ElapsedGameTime.TotalMilliseconds / 2;
+            if(direction == 0)
+            {
+                bounds.X += 2 * (float)gameTime.ElapsedGameTime.TotalMilliseconds / 2;
+            }
+            if(direction == 1)
+            {
+                bounds.X -= 2 * (float)gameTime.ElapsedGameTime.TotalMilliseconds / 2;
+            }
 
             if (bounds.X > 1920)
             {
