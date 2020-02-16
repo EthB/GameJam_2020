@@ -43,11 +43,11 @@ namespace MonoGameWindowsStarter
 
         public void PushWindow()
         {
-            bounds.Y += 5;
+            bounds.Y += game.speed;
         }
         public void PullWindow()
         {
-            bounds.Y -= 5;
+            bounds.Y -= game.speed;
         }
         public void Update(GameTime gameTime)
         {

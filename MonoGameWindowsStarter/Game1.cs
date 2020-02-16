@@ -27,6 +27,7 @@ namespace MonoGameWindowsStarter
         int tileLocationID;
         private SpriteFont TileIDFont;
         double randomCheckTimer = 0;
+        public int speed;
 
 
         public Game1()
