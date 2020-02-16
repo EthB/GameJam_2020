@@ -49,6 +49,7 @@
     <Compile Include="Enemy.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="LollipopPowerup.cs" />
+    <Compile Include="MilkBullet.cs" />
     <Compile Include="Plane.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Powerup.cs" />

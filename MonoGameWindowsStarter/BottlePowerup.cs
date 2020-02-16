@@ -97,21 +97,17 @@ namespace MonoGameWindowsStarter
 
         public override void PickUp(Game1 game)
         {
-            Random random = new Random();
-            if (random.Next(1, 100) == 69)
-            {
+            
                 pickedUp = true;
-                game.speed = 10;
                 powerupTimer = new TimeSpan(0);
-                game.player.speed = 2;
-            }
+            game.hasBottle = true;
         }
 
         public override void TimeOut(Game1 game)
         {
             game.speed = 5;
             pickedUp = false;
-            game.player.speed = 1;
+            game.hasBottle = false;
         }
 
     }

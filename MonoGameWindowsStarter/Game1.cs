@@ -28,6 +28,8 @@ namespace MonoGameWindowsStarter
         private SpriteFont TileIDFont;
         double randomCheckTimer = 0;
         public float speed = 5;
+        public bool hasBottle = false;
+        List<MilkBullet> milkBullets = new List<MilkBullet>();
 
 
         public Game1()
@@ -69,6 +71,10 @@ namespace MonoGameWindowsStarter
             powerupList.Add(new BeanPowerup(this, Content, 550, 100));
             powerupList.Add(new LollipopPowerup(this, Content, 690, 200));
             powerupList.Add(new BottlePowerup(this, Content, 600, 600));
+            foreach (MilkBullet milkbullet in milkBullets)
+            {
+                milkbullet.LoadContent(Content);
+            }
             // TODO: use this.Content to load your game content here
         }
 
@@ -92,15 +98,15 @@ namespace MonoGameWindowsStarter
                 Exit();
             tileLocationID = building.FindTile();
 
-            
+
             //logic to check if plane should spawn
             AddPlane(gameTime);
 
-            foreach(Powerup powerup in powerupList)
+            foreach (Powerup powerup in powerupList)
             {
                 powerup.Update(gameTime);
             }
-            foreach(Plane plane in planeList)
+            foreach (Plane plane in planeList)
             {
                 plane.Update(gameTime);
             }
@@ -111,17 +117,17 @@ namespace MonoGameWindowsStarter
             if (player.bounds.Y <= 300 && player.state > State.Idle)
             {
                 building.PushTile(speed);
-                foreach(Powerup powerup in powerupList)
+                foreach (Powerup powerup in powerupList)
                 {
                     powerup.PushPowerup(speed);
                 }
             }
-            if(player.bounds.Y <= 0)
+            if (player.bounds.Y <= 0)
             {
                 player.bounds.Y = 0;
             }
             //Bottom Scrolling
-            if(player.bounds.Y >= 900 && player.state > State.Idle)
+            if (player.bounds.Y >= 900 && player.state > State.Idle)
             {
                 building.PullTile(speed);
                 player.bounds.Y = 900;
@@ -132,7 +138,7 @@ namespace MonoGameWindowsStarter
 
             }
             //Right Bounds
-            if(player.bounds.X >= 1370)
+            if (player.bounds.X >= 1370)
             {
                 player.bounds.X = 1370;
             }
@@ -141,20 +147,20 @@ namespace MonoGameWindowsStarter
                 player.bounds.X = 225;
             }
 
-            for(int i = 0; i < planeList.Count; i++)
+            for (int i = 0; i < planeList.Count; i++)
             {
                 for (int j = 0; j < planeList[i].bulletList.Count; j++)
                 {
-                    if(planeList[i].bulletList[j].RectBounds.Intersects(player.RectBounds))
+                    if (planeList[i].bulletList[j].RectBounds.Intersects(player.RectBounds))
                     {
                         planeList[i].bulletList.RemoveAt(j);
                         j--;
                         //Player Health Done here
                     }
                 }
-                if(player.RectBounds.Intersects(planeList[i].RectBounds) && Keyboard.GetState().IsKeyDown(Keys.Space))
+                if (player.RectBounds.Intersects(planeList[i].RectBounds) && Keyboard.GetState().IsKeyDown(Keys.Space))
                 {
-                    
+
                     planeList.RemoveAt(i);
                     i--;
                 }
@@ -169,9 +175,29 @@ namespace MonoGameWindowsStarter
                     powerup.PickUp(this);
                     powerup.Time = new TimeSpan(0);
                 }
-                if(powerup.Time.TotalSeconds > 5)
+                if (powerup.Time.TotalSeconds > 5)
                 {
                     powerup.TimeOut(this);
+                }
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Space)) { 
+                if (hasBottle)
+                {
+                    milkBullets.Add(new MilkBullet(player.RectBounds, 1, Content));
+                    milkBullets.Add(new MilkBullet(player.RectBounds, 2, Content));
+                    milkBullets.Add(new MilkBullet(player.RectBounds, 3, Content));
+                }
+            }
+            foreach (MilkBullet milkbullet in milkBullets)
+            {
+                milkbullet.Update(gameTime);
+                
+            }
+            for(int i=1; i<milkBullets.Count(); i++)
+            {
+                if (milkBullets[i].delete)
+                {
+                    milkBullets.Remove(milkBullets[i]);
                 }
             }
 
@@ -234,7 +260,10 @@ namespace MonoGameWindowsStarter
             {
                 plane.Draw(spriteBatch);
             }
-            
+            foreach (MilkBullet milkbullet in milkBullets)
+            {
+                milkbullet.Draw(spriteBatch);
+            }
             spriteBatch.End();
             base.Draw(gameTime);
         }
