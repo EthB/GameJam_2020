@@ -8,31 +8,33 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
+
 namespace MonoGameWindowsStarter
 {
-    public class BeanPowerup: Powerup
+    class BottlePowerup : Powerup
     {
+
         Game1 game;
         Texture2D texture;
         BoundingRectangle bounds;
         ContentManager content;
-        const int FRAME_WIDTH = 37, FRAME_HEIGHT = 55, ANIMATION_FRAME_RATE = 124;
+        const int FRAME_WIDTH = 33, FRAME_HEIGHT = 49, ANIMATION_FRAME_RATE = 124;
         TimeSpan timer;
         int frame, state;
-        TimeSpan powerupTimer;
         bool pickedUp;
-
+        TimeSpan powerupTimer;
         public override Rectangle RectBounds
         {
             get { return (Rectangle)bounds; }
         }
+
         public override TimeSpan Time
         {
             get { return powerupTimer; }
             set { powerupTimer = value; }
         }
 
-        public BeanPowerup(Game1 game, ContentManager content, int xLocation, int yLocation)
+        public BottlePowerup(Game1 game, ContentManager content, int xLocation, int yLocation)
         {
             this.game = game;
             this.content = content;
@@ -49,7 +51,7 @@ namespace MonoGameWindowsStarter
         }
         public void LoadContent(int xLocation, int yLocation)
         {
-            texture = content.Load<Texture2D>("Bean_Can");
+            texture = content.Load<Texture2D>("Rotating Baby Bottle");
             bounds.Width = 90;
             bounds.Height = 90;
             bounds.X = xLocation;
@@ -65,11 +67,11 @@ namespace MonoGameWindowsStarter
             timer += gameTime.ElapsedGameTime;
             while (timer.TotalMilliseconds > ANIMATION_FRAME_RATE)
             {
-                if (state < 6)
+                if (state < 3)
                 {
                     state++;
                 }
-                else if (state == 6)
+                else if (state == 3)
                 {
                     state = 0;
                 }
@@ -81,24 +83,35 @@ namespace MonoGameWindowsStarter
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            var source = new Rectangle(
-                frame * FRAME_WIDTH,
-                state % 7 * FRAME_HEIGHT,
+            if (pickedUp == false)
+            {
+                var source = new Rectangle(
+                    frame * FRAME_WIDTH,
+                    state % 7 * FRAME_HEIGHT,
                 FRAME_WIDTH,
                 FRAME_HEIGHT);
-            spriteBatch.Draw(texture, bounds, source, Color.White);
+                spriteBatch.Draw(texture, bounds, source, Color.White);
+            }
+            else { }
         }
 
         public override void PickUp(Game1 game)
         {
-            pickedUp = true;
-
+            Random random = new Random();
+            if (random.Next(1, 100) == 69)
+            {
+                pickedUp = true;
+                game.speed = 10;
+                powerupTimer = new TimeSpan(0);
+                game.player.speed = 2;
+            }
         }
 
         public override void TimeOut(Game1 game)
         {
+            game.speed = 5;
             pickedUp = false;
-
+            game.player.speed = 1;
         }
 
     }
