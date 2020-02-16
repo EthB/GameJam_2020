@@ -43,7 +43,9 @@ namespace MonoGameWindowsStarter
         bool lastState;
         public bool pounding;
         const int POUND_FRAMERATE = 180;
-        int frameCount = 0;
+        public int frameCount = 0;
+        SoundEffect climbSound;
+        public int frameCount2 = 0;
 
         public Player(Game1 game)
         {
@@ -62,6 +64,8 @@ namespace MonoGameWindowsStarter
             flyingBaby = content.Load<Texture2D>("Baby Projectile");
             cryingBaby = content.Load<Texture2D>("Crying Baby");
             poundingTexture = content.Load<Texture2D>("Baby Rampage");
+            climbSound = content.Load<SoundEffect>("climb sound");
+
 
             bounds.Width = 400;
             bounds.Height = 400;
@@ -108,7 +112,10 @@ namespace MonoGameWindowsStarter
             {
                 if (pounding)
                 {
-
+                    if(frameCount == 3)
+                    {
+                        
+                    }
                 }
                 else
                 {
@@ -203,7 +210,16 @@ namespace MonoGameWindowsStarter
                         state = State.Idle;
                     }
                     frame++;
+                    if (frameCount2 < 2)
+                    {
+                        frameCount2++;
+                    }
+                    else { frameCount2 = 0; }
                     timer -= new TimeSpan(0, 0, 0, 0, ANIMATION_FRAME_RATE);
+                    if (frameCount2 == 2 && !game.deadBaby && !FlyingBaby)
+                    {
+                        climbSound.Play((float)0.2, 0, 0);
+                    }
                 }
             }
             if (game.deadBaby || pounding)
