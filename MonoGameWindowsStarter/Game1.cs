@@ -28,6 +28,10 @@ namespace MonoGameWindowsStarter
         private SpriteFont TileIDFont;
         double randomCheckTimer = 0;
         public int speed;
+        Healthbar health1;
+        Healthbar health2;
+        Healthbar health3;
+        public int hits = 3;
 
 
         public Game1()
@@ -35,7 +39,10 @@ namespace MonoGameWindowsStarter
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             player = new Player(this);
-            
+            health1 = new Healthbar(this, 0, 950);
+            health2 = new Healthbar(this, 100, 950);
+            health3 = new Healthbar(this, 200, 950);
+
         }
             
         /// <summary>
@@ -69,6 +76,9 @@ namespace MonoGameWindowsStarter
             powerupList.Add(new BeanPowerup(this, Content, 550, 100));
             powerupList.Add(new LollipopPowerup(this, Content, 690, 200));
             powerupList.Add(new BottlePowerup(this, Content, 600, 600));
+            health1.LoadContent(Content);
+            health2.LoadContent(Content);
+            health3.LoadContent(Content);
             // TODO: use this.Content to load your game content here
         }
 
@@ -158,6 +168,7 @@ namespace MonoGameWindowsStarter
                         planeList[i].bulletList.RemoveAt(j);
                         j--;
                         //Player Health Done here
+                        hits--;
                     }
                 }
                 if(player.RectBounds.Intersects(planeList[i].RectBounds) && Keyboard.GetState().IsKeyDown(Keys.Space))
@@ -242,7 +253,13 @@ namespace MonoGameWindowsStarter
             {
                 plane.Draw(spriteBatch);
             }
-            
+            if (hits >= 3)
+                health3.Draw(spriteBatch);
+            if (hits >= 2)
+                health2.Draw(spriteBatch);
+            if (hits >= 1)
+                health1.Draw(spriteBatch);
+
             spriteBatch.End();
             base.Draw(gameTime);
         }
