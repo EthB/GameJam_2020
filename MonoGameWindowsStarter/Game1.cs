@@ -41,6 +41,7 @@ namespace MonoGameWindowsStarter
         public bool deadBaby;
         public bool isStarted;
         Texture2D titleTexture;
+        public double score;
 
 
         public Game1()
@@ -166,6 +167,7 @@ namespace MonoGameWindowsStarter
             //Top Scrolling
             if (player.bounds.Y <= 300 && player.state > State.Idle)
             {
+                score += 0.016667;
                 building.PushTile(speed);
                 foreach(Powerup powerup in powerupList)
                 {
@@ -238,7 +240,7 @@ namespace MonoGameWindowsStarter
                 }
                 if(player.RectBounds.Intersects(planeList[i].RectBounds) && Keyboard.GetState().IsKeyDown(Keys.Space))
                 {
-                    
+                    score += 500;
                     planeList.RemoveAt(i);
                     i--;
                 }
@@ -250,6 +252,7 @@ namespace MonoGameWindowsStarter
             {
                 if (powerupList[i].RectBounds.Intersects(player.RectBounds))
                 {
+                    score += 25;
                     powerupList[i].PickUp(this);
                     powerupList[i].Time = new TimeSpan(0);
                 }
@@ -332,6 +335,18 @@ namespace MonoGameWindowsStarter
                     player.bounds.Y = 200;
                 }
             }
+            if(building.tileSet[0].bounds.Y >= -100 && building.tileSet[0].bounds.Y <= 1080)
+            {
+                if(player.bounds.Y >= 900)
+                {
+                    speed = 0.001f;
+                    player.bounds.Y = 900;
+                }
+                else
+                {
+                    speed = 5;
+                }
+            }
 
             base.Update(gameTime);
         }
@@ -401,7 +416,7 @@ namespace MonoGameWindowsStarter
             // TODO: Add your drawing code here
             spriteBatch.Begin();
             spriteBatch.Draw(Sky, new Rectangle(0,0,1920,1080), Color.White);
-            spriteBatch.DrawString(TileIDFont, "Tile ID: " + tileLocationID, new Vector2(0, 0), Color.White);
+            spriteBatch.DrawString(TileIDFont, "Score: " + (int)score, new Vector2(0, 0), Color.White);
             foreach (Cloud cloud in cloudList)
             {
                 cloud.Draw(spriteBatch);
@@ -438,7 +453,7 @@ namespace MonoGameWindowsStarter
             }
             if (deadBaby)
             {
-                spriteBatch.DrawString(DeadFont, "Baby is Dead :'(, Press Enter to retry", new Vector2(500, 600), Color.White);
+                spriteBatch.DrawString(DeadFont, "Game Over, Press Enter to retry", new Vector2(500, 600), Color.White);
             }
             spriteBatch.End();
             base.Draw(gameTime);
