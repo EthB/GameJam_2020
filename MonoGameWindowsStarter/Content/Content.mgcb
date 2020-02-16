@@ -13,6 +13,18 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Baby Rattle.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Baby Rattle.png
+
 #begin Baby_Crawl.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -61,7 +73,7 @@
 /processorParam:TextureFormat=Color
 /build:Dot.png
 
-#begin face.png
+#begin Glass Window Tiles.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -71,7 +83,19 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:face.png
+/build:Glass Window Tiles.png;Window.png
+
+#begin Lollipop.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Lollipop.png
 
 #begin planeBlue.png
 /importer:TextureImporter
@@ -84,6 +108,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:planeBlue.png
+
+#begin Rotating Baby Bottle.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Rotating Baby Bottle.png
 
 #begin TileLocation.spritefont
 /importer:FontDescriptionImporter
@@ -199,16 +235,4 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:upscaled building textures/sprite_8.png
-
-#begin window.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:window.png
 

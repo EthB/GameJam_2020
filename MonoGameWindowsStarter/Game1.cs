@@ -19,7 +19,7 @@ namespace MonoGameWindowsStarter
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Player player;
+        public Player player;
         Building building;
         List<Plane> planeList = new List<Plane>();
         List<Powerup> powerupList = new List<Powerup>();
@@ -27,22 +27,17 @@ namespace MonoGameWindowsStarter
         int tileLocationID;
         private SpriteFont TileIDFont;
         double randomCheckTimer = 0;
-        Healthbar health1;
-        Healthbar health2;
-        Healthbar health3;
-        public int hits = 3;
+        public int speed;
+
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             player = new Player(this);
-            health1 = new Healthbar(this, 0, 950);
-            health2 = new Healthbar(this, 100, 950);
-            health3 = new Healthbar(this, 200, 950);
             
         }
-
+            
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -72,9 +67,8 @@ namespace MonoGameWindowsStarter
             building.LoadContent();
             TileIDFont = Content.Load<SpriteFont>("TileLocation");
             powerupList.Add(new BeanPowerup(this, Content, 550, 100));
-            health1.LoadContent(Content);
-            health2.LoadContent(Content);
-            health3.LoadContent(Content);
+            powerupList.Add(new LollipopPowerup(this, Content, 690, 200));
+            powerupList.Add(new BottlePowerup(this, Content, 600, 600));
             // TODO: use this.Content to load your game content here
         }
 
@@ -98,12 +92,10 @@ namespace MonoGameWindowsStarter
                 Exit();
             tileLocationID = building.FindTile();
 
-           
-
-
+            
             //logic to check if plane should spawn
             AddPlane(gameTime);
-
+            building.Update(gameTime);
             foreach(Powerup powerup in powerupList)
             {
                 powerup.Update(gameTime);
@@ -118,10 +110,14 @@ namespace MonoGameWindowsStarter
             //Top Scrolling
             if (player.bounds.Y <= 300 && player.state > State.Idle)
             {
-                building.PushTile();
+                building.PushTile(speed);
                 foreach(Powerup powerup in powerupList)
                 {
-                    powerup.PushPowerup();
+                    powerup.PushPowerup(speed);
+                }
+                foreach(Window window in building.windowSet)
+                {
+                    window.PushWindow();
                 }
             }
             if(player.bounds.Y <= 0)
@@ -131,11 +127,15 @@ namespace MonoGameWindowsStarter
             //Bottom Scrolling
             if(player.bounds.Y >= 900 && player.state > State.Idle)
             {
-                building.PullTile();
+                building.PullTile(speed);
                 player.bounds.Y = 900;
                 foreach (Powerup powerup in powerupList)
                 {
-                    powerup.PullPowerup();
+                    powerup.PullPowerup(speed);
+                }
+                foreach(Window window in building.windowSet)
+                {
+                    window.PullWindow();
                 }
 
             }
@@ -158,17 +158,32 @@ namespace MonoGameWindowsStarter
                         planeList[i].bulletList.RemoveAt(j);
                         j--;
                         //Player Health Done here
-                        hits--;
                     }
                 }
                 if(player.RectBounds.Intersects(planeList[i].RectBounds) && Keyboard.GetState().IsKeyDown(Keys.Space))
                 {
+                    
                     planeList.RemoveAt(i);
                     i--;
                 }
             }
-       
-           
+
+            //powerups
+
+            foreach (Powerup powerup in powerupList)
+            {
+                if (powerup.RectBounds.Intersects(player.RectBounds))
+                {
+                    powerup.PickUp(this);
+                    powerup.Time = new TimeSpan(0);
+                }
+                if(powerup.Time.TotalSeconds > 5)
+                {
+                    powerup.TimeOut(this);
+                }
+            }
+
+            
 
             base.Update(gameTime);
         }
@@ -202,6 +217,8 @@ namespace MonoGameWindowsStarter
                     }
                 }
             }
+
+            
         }
 
         /// <summary>
@@ -225,17 +242,7 @@ namespace MonoGameWindowsStarter
             {
                 plane.Draw(spriteBatch);
             }
-
             
-            
-            if(hits >= 3)
-                health3.Draw(spriteBatch);
-            if(hits >= 2)
-                health2.Draw(spriteBatch);
-            if(hits >= 1)
-                health1.Draw(spriteBatch);
-            spriteBatch.DrawString(TileIDFont, "hits: " + hits.ToString(), new Vector2(10, 10), Color.White);
-
             spriteBatch.End();
             base.Draw(gameTime);
         }

@@ -13,10 +13,27 @@ namespace MonoGameWindowsStarter
 {
     public abstract class Powerup
     {
-        public abstract void PullPowerup();
-        public abstract void PushPowerup();
+        public abstract void PullPowerup(float speed);
+        public abstract void PushPowerup(float speed);
 
         public abstract void Draw(SpriteBatch spriteBatch);
         public abstract void Update(GameTime gameTime);
+
+        public abstract void PickUp(Game1 game);
+
+        public abstract void TimeOut(Game1 game);
+
+        BoundingRectangle bounds;
+        TimeSpan powerupTimer;
+        public virtual Rectangle RectBounds
+        {
+            get { return (Rectangle)bounds; }
+        }
+        public virtual TimeSpan Time
+        {
+            get { return powerupTimer; }
+            set { powerupTimer = value; }
+        }
+
     }
 }

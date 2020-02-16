@@ -30,6 +30,7 @@ namespace MonoGameWindowsStarter
         public State state = State.Idle;
         TimeSpan timer;
         int frame;
+        public float speed;
 
         public Player(Game1 game)
         {
@@ -49,6 +50,7 @@ namespace MonoGameWindowsStarter
             bounds.Height = 400;
             bounds.Y = game.GraphicsDevice.Viewport.Height - 200;
             bounds.X = game.GraphicsDevice.Viewport.Width / 2 - 200;
+            speed = 1;
         }
 
         public void Update(GameTime gameTime)
@@ -56,22 +58,22 @@ namespace MonoGameWindowsStarter
             var keyboardState = Keyboard.GetState();
             if(keyboardState.IsKeyDown(Keys.Up))
             {
-                bounds.Y -= (float)gameTime.ElapsedGameTime.TotalMilliseconds / 2;
+                bounds.Y -= ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
                 if(state == State.Idle)state = State.Moving;
             }
             if(keyboardState.IsKeyDown(Keys.Down))
             {
-                bounds.Y += (float)gameTime.ElapsedGameTime.TotalMilliseconds / 2;
+                bounds.Y += ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
                 if (state == State.Idle) state = State.Moving;
             }
             if(keyboardState.IsKeyDown(Keys.Right))
             {
-                bounds.X += (float)gameTime.ElapsedGameTime.TotalMilliseconds / 2;
+                bounds.X += ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
                 if (state == State.Idle) state = State.Moving;
             }
             if(keyboardState.IsKeyDown(Keys.Left))
             {
-                bounds.X -= (float)gameTime.ElapsedGameTime.TotalMilliseconds / 2;
+                bounds.X -= ((float)gameTime.ElapsedGameTime.TotalMilliseconds / 2) * speed;
                 if (state == State.Idle) state = State.Moving;
             }
             if(keyboardState.IsKeyUp(Keys.Up) && keyboardState.IsKeyUp(Keys.Down) && keyboardState.IsKeyUp(Keys.Left) && keyboardState.IsKeyUp(Keys.Right))
