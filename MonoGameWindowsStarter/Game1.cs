@@ -27,7 +27,6 @@ namespace MonoGameWindowsStarter
         int tileLocationID;
         private SpriteFont TileIDFont;
         double randomCheckTimer = 0;
-        public float speed = 5;
 
 
         public Game1()
@@ -37,7 +36,7 @@ namespace MonoGameWindowsStarter
             player = new Player(this);
             
         }
-
+            
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -95,7 +94,7 @@ namespace MonoGameWindowsStarter
             
             //logic to check if plane should spawn
             AddPlane(gameTime);
-
+            building.Update(gameTime);
             foreach(Powerup powerup in powerupList)
             {
                 powerup.Update(gameTime);
@@ -115,6 +114,10 @@ namespace MonoGameWindowsStarter
                 {
                     powerup.PushPowerup(speed);
                 }
+                foreach(Window window in building.windowSet)
+                {
+                    window.PushWindow();
+                }
             }
             if(player.bounds.Y <= 0)
             {
@@ -128,6 +131,10 @@ namespace MonoGameWindowsStarter
                 foreach (Powerup powerup in powerupList)
                 {
                     powerup.PullPowerup(speed);
+                }
+                foreach(Window window in building.windowSet)
+                {
+                    window.PullWindow();
                 }
 
             }
