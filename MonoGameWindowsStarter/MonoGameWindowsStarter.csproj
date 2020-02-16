@@ -42,11 +42,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BeanPowerup.cs" />
+    <Compile Include="BottlePowerup.cs" />
     <Compile Include="BoundingRectangle.cs" />
     <Compile Include="Building.cs" />
     <Compile Include="Bullet.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="LollipopPowerup.cs" />
     <Compile Include="Plane.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Powerup.cs" />

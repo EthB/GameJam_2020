@@ -19,7 +19,7 @@ namespace MonoGameWindowsStarter
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Player player;
+        public Player player;
         Building building;
         List<Plane> planeList = new List<Plane>();
         List<Powerup> powerupList = new List<Powerup>();
@@ -27,6 +27,8 @@ namespace MonoGameWindowsStarter
         int tileLocationID;
         private SpriteFont TileIDFont;
         double randomCheckTimer = 0;
+        public float speed = 5;
+
 
         public Game1()
         {
@@ -65,6 +67,8 @@ namespace MonoGameWindowsStarter
             building.LoadContent();
             TileIDFont = Content.Load<SpriteFont>("TileLocation");
             powerupList.Add(new BeanPowerup(this, Content, 550, 100));
+            powerupList.Add(new LollipopPowerup(this, Content, 690, 200));
+            powerupList.Add(new BottlePowerup(this, Content, 600, 600));
             // TODO: use this.Content to load your game content here
         }
 
@@ -106,10 +110,10 @@ namespace MonoGameWindowsStarter
             //Top Scrolling
             if (player.bounds.Y <= 300 && player.state > State.Idle)
             {
-                building.PushTile();
+                building.PushTile(speed);
                 foreach(Powerup powerup in powerupList)
                 {
-                    powerup.PushPowerup();
+                    powerup.PushPowerup(speed);
                 }
             }
             if(player.bounds.Y <= 0)
@@ -119,11 +123,11 @@ namespace MonoGameWindowsStarter
             //Bottom Scrolling
             if(player.bounds.Y >= 900 && player.state > State.Idle)
             {
-                building.PullTile();
+                building.PullTile(speed);
                 player.bounds.Y = 900;
                 foreach (Powerup powerup in powerupList)
                 {
-                    powerup.PullPowerup();
+                    powerup.PullPowerup(speed);
                 }
 
             }
@@ -150,11 +154,27 @@ namespace MonoGameWindowsStarter
                 }
                 if(player.RectBounds.Intersects(planeList[i].RectBounds) && Keyboard.GetState().IsKeyDown(Keys.Space))
                 {
+                    
                     planeList.RemoveAt(i);
                     i--;
                 }
             }
-                
+
+            //powerups
+
+            foreach (Powerup powerup in powerupList)
+            {
+                if (powerup.RectBounds.Intersects(player.RectBounds))
+                {
+                    powerup.PickUp(this);
+                    powerup.Time = new TimeSpan(0);
+                }
+                if(powerup.Time.TotalSeconds > 5)
+                {
+                    powerup.TimeOut(this);
+                }
+            }
+
             
 
             base.Update(gameTime);
@@ -189,6 +209,8 @@ namespace MonoGameWindowsStarter
                     }
                 }
             }
+
+            
         }
 
         /// <summary>

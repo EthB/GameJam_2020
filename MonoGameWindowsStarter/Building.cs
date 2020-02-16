@@ -61,18 +61,18 @@ namespace MonoGameWindowsStarter
         {
 
         }
-        public void PushTile()
+        public void PushTile(float speed)
         {
             foreach(Tile tile in tileSet)
             {
-                tile.bounds.Y += 5;
+                tile.bounds.Y += speed;
             }
         }
-        public void PullTile()
+        public void PullTile(float speed)
         {
             foreach(Tile tile in tileSet)
             {
-                tile.bounds.Y -= 5;
+                tile.bounds.Y -= speed;
             }
         }
         public void Draw(SpriteBatch spriteBatch)
