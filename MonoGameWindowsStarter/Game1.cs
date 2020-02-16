@@ -46,6 +46,8 @@ namespace MonoGameWindowsStarter
         Song introSong;
         SoundEffect planeExplode;
         SoundEffect babyHit;
+        List<Cracks> cracksList;
+        TimeSpan crackTimer;
 
 
         public Game1()
@@ -116,6 +118,8 @@ namespace MonoGameWindowsStarter
             MediaPlayer.Play(introSong);
             planeExplode = Content.Load<SoundEffect>("plane_explodeWAV");
             babyHit = Content.Load<SoundEffect>("baby_hit");
+            cracksList = new List<Cracks>();
+            crackTimer = new TimeSpan(0);
             // TODO: use this.Content to load your game content here
         }
 
@@ -177,7 +181,7 @@ namespace MonoGameWindowsStarter
             player.Update(gameTime);
 
             //Top Scrolling
-            if (player.bounds.Y <= 300 && player.state > State.Idle)
+            if (player.bounds.Y <= 300 && player.state > State.Idle && !player.pounding)
             {
                 score += 0.016667;
                 building.PushTile(speed);
@@ -197,13 +201,17 @@ namespace MonoGameWindowsStarter
                 {
                     cloud.PushCloud();
                 }
+                foreach(Cracks crack in cracksList)
+                {
+                    crack.Push(speed);
+                }
             }
             if(player.bounds.Y <= 300)
             {
                 player.bounds.Y = 300;
             }
             //Bottom Scrolling
-            if(player.bounds.Y >= 900 && player.state > State.Idle)
+            if(player.bounds.Y >= 900 && player.state > State.Idle && !player.pounding)
             {
                 building.PullTile(speed);
                 player.bounds.Y = 900;
@@ -222,6 +230,10 @@ namespace MonoGameWindowsStarter
                 foreach(Cloud cloud in cloudList)
                 {
                     cloud.PullCloud();
+                }
+                foreach(Cracks crack in cracksList)
+                {
+                    crack.Pull(speed);
                 }
 
             }
@@ -244,7 +256,7 @@ namespace MonoGameWindowsStarter
                         planeList[i].bulletList.RemoveAt(j);
                         j--;
                         //Player Health Done here
-                        if (!hasBottle)
+                        if (!hasBottle && !player.FlyingBaby)
                         {
                             hits--;
                             babyHit.Play();
@@ -264,7 +276,7 @@ namespace MonoGameWindowsStarter
 
             for (int i = 0; i < powerupList.Count; i++)
             {
-                if (powerupList[i].RectBounds.Intersects(player.RectBounds))
+                if (powerupList[i].RectBounds.Intersects(player.RectBounds) && !deadBaby)
                 {
                     score += 25;
                     powerupList[i].PickUp(this);
@@ -279,13 +291,21 @@ namespace MonoGameWindowsStarter
             }
     
             if(Keyboard.GetState().IsKeyDown(Keys.Space)) {
-                if (hasBottle)
+                if (crackTimer.TotalSeconds > 1 && !hasBottle)
+                {
+                    player.pounding = true;
+                    cracksList.Add(new Cracks(player, Content));
+                    crackTimer = new TimeSpan(0);
+                }
+                else if (crackTimer.TotalMilliseconds > 200 && hasBottle)
                 {
                     milkBullets.Add(new MilkBullet(player.RectBounds, 1, Content));
                     milkBullets.Add(new MilkBullet(player.RectBounds, 2, Content));
                     milkBullets.Add(new MilkBullet(player.RectBounds, 3, Content));
+                    crackTimer = new TimeSpan(0);
                 }
             }
+            crackTimer += gameTime.ElapsedGameTime;
             foreach (MilkBullet milkbullet in milkBullets)
             {
                 milkbullet.Update(gameTime);
@@ -327,7 +347,7 @@ namespace MonoGameWindowsStarter
             {
                 if(trash.RectBounds.Intersects(player.RectBounds) && hitsTimer >= 3)
                 {
-                    if (!hasBottle)
+                    if (!hasBottle && !player.FlyingBaby)
                     {
                         hits--;
                         hitsTimer = 0;
@@ -442,8 +462,12 @@ namespace MonoGameWindowsStarter
             {
                 powerup.Draw(spriteBatch);
             }
-            
+            foreach( Cracks crack in cracksList)
+            {
+                crack.Draw(spriteBatch);
+            }
             player.Draw(spriteBatch);
+            
             foreach (Plane plane in planeList)
             {
                 plane.Draw(spriteBatch);
@@ -466,6 +490,7 @@ namespace MonoGameWindowsStarter
                 rect.SetData(data);
                 spriteBatch.Draw(rect, new Rectangle(100, 200, 1700, 500), Color.Black);
                 spriteBatch.Draw(titleTexture, new Rectangle(200, 200, 1500, 500), Color.White);
+                spriteBatch.DrawString(DeadFont, "Press 'Enter' to start", new Vector2(700, 630), Color.White);
             }
             if (deadBaby)
             {
