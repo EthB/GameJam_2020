@@ -109,6 +109,12 @@
 /processorParam:TextureFormat=Color
 /build:bulletBlueSilver_outline.png;bulletBlue.png
 
+#begin climb sound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:climb sound.wav
+
 #begin cloud.png
 /importer:TextureImporter
 /processor:TextureProcessor

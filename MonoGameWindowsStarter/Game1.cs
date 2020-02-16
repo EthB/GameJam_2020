@@ -294,11 +294,17 @@ namespace MonoGameWindowsStarter
                 }
             }
     
+            if(player.frameCount == 3)
+            {
+                cracksList.Add(new Cracks(player, Content));
+                planeExplode.Play();
+            }
             if(Keyboard.GetState().IsKeyDown(Keys.Space)) {
                 if (crackTimer.TotalSeconds > 1 && !hasBottle)
                 {
                     player.pounding = true;
-                    cracksList.Add(new Cracks(player, Content));
+                    
+                    
                     crackTimer = new TimeSpan(0);
                 }
                 else if (crackTimer.TotalMilliseconds > 200 && hasBottle)
