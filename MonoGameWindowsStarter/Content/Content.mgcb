@@ -49,6 +49,18 @@
 /processorParam:TextureFormat=Color
 /build:Baby_Crawl.png
 
+#begin Baby's First Tantrum.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Baby's First Tantrum.png;Title.png
+
 #begin Bean_Can.png
 /importer:TextureImporter
 /processor:TextureProcessor

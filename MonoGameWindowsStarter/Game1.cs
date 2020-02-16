@@ -39,6 +39,8 @@ namespace MonoGameWindowsStarter
         Texture2D Sky;
         double hitsTimer;
         public bool deadBaby;
+        public bool isStarted;
+        Texture2D titleTexture;
 
 
         public Game1()
@@ -85,6 +87,7 @@ namespace MonoGameWindowsStarter
             milkBullets = new List<MilkBullet>();
             hits = 3;
             deadBaby = false;
+            isStarted = false;
             double hitsTimer = 0;
             // Create a new SpriteBatch, which can be used to draw textures.
             building = new Building(this, 700, Content, graphics.GraphicsDevice);
@@ -94,6 +97,7 @@ namespace MonoGameWindowsStarter
             TileIDFont = Content.Load<SpriteFont>("TileLocation");
             DeadFont = Content.Load<SpriteFont>("DeadFont");
             Sky = Content.Load<Texture2D>("Sky");
+            titleTexture = Content.Load<Texture2D>("Title");
             health1.LoadContent(Content);
             health2.LoadContent(Content);
             health3.LoadContent(Content);
@@ -124,9 +128,16 @@ namespace MonoGameWindowsStarter
                 Exit();
             tileLocationID = building.FindTile();
 
-            if (deadBaby && Keyboard.GetState().IsKeyDown(Keys.Enter))
+            if (Keyboard.GetState().IsKeyDown(Keys.Enter))
             {
-                Restart();
+                if (deadBaby)
+                {
+                    Restart();
+                }
+                if (!isStarted)
+                {
+                    isStarted = true;
+                }
             }
             hitsTimer += gameTime.ElapsedGameTime.TotalSeconds;
             if(speed <= 0)
@@ -219,7 +230,10 @@ namespace MonoGameWindowsStarter
                         planeList[i].bulletList.RemoveAt(j);
                         j--;
                         //Player Health Done here
-                        hits--;
+                        if (!hasBottle)
+                        {
+                            hits--;
+                        }
                     }
                 }
                 if(player.RectBounds.Intersects(planeList[i].RectBounds) && Keyboard.GetState().IsKeyDown(Keys.Space))
@@ -258,7 +272,22 @@ namespace MonoGameWindowsStarter
             foreach (MilkBullet milkbullet in milkBullets)
             {
                 milkbullet.Update(gameTime);
-
+                for(int i=0; i<building.trashList.Count; i++)
+                {
+                    if (building.trashList[i].RectBounds.Intersects(milkbullet.bounds))
+                    {
+                        building.trashList.RemoveAt(i);
+                        i--;
+                    }
+                }
+                for(int i=0; i<planeList.Count; i++)
+                {
+                    if (planeList[i].RectBounds.Intersects(milkbullet.bounds))
+                    {
+                        planeList.RemoveAt(i);
+                        i--;
+                    }
+                }
             }
             for (int i = 1; i < milkBullets.Count(); i++)
             {
@@ -281,8 +310,11 @@ namespace MonoGameWindowsStarter
             {
                 if(trash.RectBounds.Intersects(player.RectBounds) && hitsTimer >= 3)
                 {
-                    hits--;
-                    hitsTimer = 0;
+                    if (!hasBottle)
+                    {
+                        hits--;
+                        hitsTimer = 0;
+                    }
                 }
             }
 
@@ -395,9 +427,18 @@ namespace MonoGameWindowsStarter
             {
                 milkbullet.Draw(spriteBatch);
             }
+            if (!isStarted)
+            {
+                Texture2D rect = new Texture2D(graphics.GraphicsDevice, 80, 30);
+                Color[] data = new Color[80 * 30];
+                for (int i = 0; i < data.Length; ++i) data[i] = Color.Chocolate;
+                rect.SetData(data);
+                spriteBatch.Draw(rect, new Rectangle(100, 200, 1700, 500), Color.Black);
+                spriteBatch.Draw(titleTexture, new Rectangle(200, 200, 1500, 500), Color.White);
+            }
             if (deadBaby)
             {
-                spriteBatch.DrawString(DeadFont, "You Dead, Press Enter to retry", new Vector2(600, 600), Color.White);
+                spriteBatch.DrawString(DeadFont, "Baby is Dead :'(, Press Enter to retry", new Vector2(500, 600), Color.White);
             }
             spriteBatch.End();
             base.Draw(gameTime);
