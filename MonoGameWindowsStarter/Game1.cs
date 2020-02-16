@@ -428,6 +428,7 @@ namespace MonoGameWindowsStarter
             spriteBatch.Begin();
             spriteBatch.Draw(Sky, new Rectangle(0,0,1920,1080), Color.White);
             spriteBatch.DrawString(TileIDFont, "Score: " + (int)score, new Vector2(0, 0), Color.White);
+            spriteBatch.DrawString(TileIDFont, "Floor: " + (tileLocationID + 1), new Vector2(0, 20), Color.White);
             foreach (Cloud cloud in cloudList)
             {
                 cloud.Draw(spriteBatch);
