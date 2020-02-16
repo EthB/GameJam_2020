@@ -49,6 +49,12 @@
 /processorParam:TextureFormat=Color
 /build:Baby_Crawl.png
 
+#begin baby_hit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:baby_hit.wav
+
 #begin Baby's First Tantrum.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -60,12 +66,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Baby's First Tantrum.png;Title.png
-
-#begin baby_hit.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:baby_hit.wav
 
 #begin Bean_Can.png
 /importer:TextureImporter
@@ -187,6 +187,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:glassBreak.wav
+
+#begin groove.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:groove.mp3
 
 #begin Lollipop.png
 /importer:TextureImporter

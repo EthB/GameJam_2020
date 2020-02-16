@@ -43,6 +43,7 @@ namespace MonoGameWindowsStarter
         Texture2D titleTexture;
         public double score;
         Song backgroundSong;
+        Song introSong;
         SoundEffect planeExplode;
         SoundEffect babyHit;
 
@@ -111,7 +112,8 @@ namespace MonoGameWindowsStarter
             }
             
             backgroundSong = Content.Load<Song>("Brass");
-            MediaPlayer.Play(backgroundSong);
+            introSong = Content.Load<Song>("groove");
+            MediaPlayer.Play(introSong);
             planeExplode = Content.Load<SoundEffect>("plane_explodeWAV");
             babyHit = Content.Load<SoundEffect>("baby_hit");
             // TODO: use this.Content to load your game content here
@@ -145,6 +147,8 @@ namespace MonoGameWindowsStarter
                 }
                 if (!isStarted)
                 {
+                    MediaPlayer.Stop();
+                    MediaPlayer.Play(backgroundSong);
                     isStarted = true;
                 }
             }
