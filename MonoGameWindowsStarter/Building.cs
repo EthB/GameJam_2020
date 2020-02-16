@@ -38,8 +38,7 @@ namespace MonoGameWindowsStarter
                 randomWindowCount = random.Next(1, 4);
                 tileSet.Add(new Tile(game, tileSet[i - 1].bounds.Y - 1080));
                 if (i < tileSize - 2)
-                {
-
+                { 
                     switch (randomWindowCount)
                     {
                         case 1:

@@ -104,7 +104,7 @@ namespace MonoGameWindowsStarter
         {
             pickedUp = false;
             game.speed = 5;
-            game.player.speed = 5;
+            game.player.speed = 1;
             game.player.FlyingBaby = false;
 
         }
